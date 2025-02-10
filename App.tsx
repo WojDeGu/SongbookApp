@@ -38,8 +38,8 @@ const AppNavigator: React.FC = () => {
         },
       }}
     >
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="SongDetail" component={SongDetail} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Strona główna' }}/>
+      <Stack.Screen name="SongDetail" component={SongDetail} options={{ title: 'Piosenka' }}/>
     </Stack.Navigator>
   );
 };

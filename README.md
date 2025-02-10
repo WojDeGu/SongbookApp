@@ -1,4 +1,4 @@
-# Prosta aplikacja śpiewnika
+# Prosta aplikacja śpiewnika religijnego
 Prosta aplikacja, która ma działać na iOS i android.
 
 **v1.0b ~ 10.02.2025**

@@ -95,7 +95,7 @@ const HomeScreen: React.FC = () => {
       <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={handleCategoryChange} />
 
       <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Pokaż tylko ulubione</Text>
+        <Text style={styles.switchLabel}>Ulubione</Text>
         <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} />
       </View>
 
@@ -105,7 +105,7 @@ const HomeScreen: React.FC = () => {
       </View>
 
       <TouchableOpacity style={styles.button} onPress={fetchSongsFromAPI}>
-        <Text style={styles.buttonText}>Pobierz najnowsze piosenki</Text>
+        <Text style={styles.buttonText}>Pobierz piosenki</Text>
       </TouchableOpacity>
 
       {songCount !== null && <Text style={styles.songCount}>Liczba piosenek: {songCount}</Text>}
