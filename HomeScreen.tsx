@@ -1,0 +1,217 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native';
+import CategoryPicker from './CategoryPicker';
+import SongList from './SongList';
+import { useTheme } from './ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const API_URL = 'https://swefiles.swe.pl/api.php';
+const LOCAL_STORAGE_KEY = 'songbook.json';
+
+const HomeScreen: React.FC = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
+  const { theme, toggleTheme } = useTheme();
+  const [favoriteSongIds, setFavoriteSongIds] = useState<number[]>([]);
+  const [songCount, setSongCount] = useState<number | null>(null);
+  
+
+  useEffect(() => {
+    loadFavoritesOnly();
+    loadFavoriteSongs();
+    checkLocalData();
+  }, []);
+
+  const checkLocalData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem(LOCAL_STORAGE_KEY);
+      if (storedData) {
+        const songs = JSON.parse(storedData);
+        setSongCount(songs.length);
+      } else {
+        setSongCount(0);
+      }
+    } catch (error) {
+      console.error('Błąd przy sprawdzaniu lokalnych danych:', error);
+    }
+  };
+
+  const fetchSongsFromAPI = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+
+      await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+
+      Alert.alert('Sukces', 'Piosenki zostały pobrane. Zresetuj aplikację.');
+      setSongCount(data.length);
+    } catch (error) {
+      Alert.alert('Błąd', 'Nie udało się pobrać piosenek.');
+      console.error('Błąd pobierania piosenek:', error);
+    }
+  };
+
+  const updateFavorites = (favoriteIds: number[]) => {
+    setFavoriteSongIds(favoriteIds);
+    AsyncStorage.setItem('favoriteSongs', JSON.stringify(favoriteIds));
+  };
+
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category);
+  };
+
+  const toggleFavoriteSwitch = async () => {
+    const newFavoritesOnly = !favoritesOnly;
+    setFavoritesOnly(newFavoritesOnly);
+  };
+
+  const loadFavoritesOnly = async () => {
+    try {
+      const storedFavoritesOnly = await AsyncStorage.getItem('favoritesOnly');
+      if (storedFavoritesOnly !== null) {
+        setFavoritesOnly(JSON.parse(storedFavoritesOnly));
+      }
+    } catch (error) {
+      console.error('Błąd przy ładowaniu "favoritesOnly" z AsyncStorage:', error);
+    }
+  };
+
+  const loadFavoriteSongs = async () => {
+    try {
+      const storedFavorites = await AsyncStorage.getItem('favoriteSongs');
+      if (storedFavorites !== null) {
+        setFavoriteSongIds(JSON.parse(storedFavorites));
+      }
+    } catch (error) {
+      console.error('Błąd przy ładowaniu ulubionych piosenek:', error);
+    }
+  };
+
+  const styles = theme === 'light' ? lightStyles : darkStyles;
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Wybierz kategorię</Text>
+      <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={handleCategoryChange} />
+
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Pokaż tylko ulubione</Text>
+        <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} />
+      </View>
+
+      <View style={styles.themeToggleContainer}>
+        <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
+        <Switch value={theme === 'dark'} onValueChange={toggleTheme} />
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={fetchSongsFromAPI}>
+        <Text style={styles.buttonText}>Pobierz najnowsze piosenki</Text>
+      </TouchableOpacity>
+
+      {songCount !== null && <Text style={styles.songCount}>Liczba piosenek: {songCount}</Text>}
+
+      <SongList 
+      selectedCategory={selectedCategory} 
+      favoritesOnly={favoritesOnly} 
+      favoriteSongIds={favoriteSongIds} 
+      updateFavorites={updateFavorites} />
+    </View>
+  );
+};
+
+
+const lightStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#ffffff', // Białe tło
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#000000', // Czarny tekst
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  switchLabel: {
+    fontSize: 16,
+    marginRight: 10,
+    color: '#000000', // Czarny tekst
+  },
+  themeToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  songCount: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#000000',
+  },
+});
+
+const darkStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#000000', // Odwrócone z białego (czarne)
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#ffffff', // Odwrócone z czarnego (białe)
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  switchLabel: {
+    fontSize: 16,
+    marginRight: 10,
+    color: '#ffffff', // Odwrócone z czarnego (białe)
+  },
+  themeToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#1e90ff',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  songCount: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#ffffff',
+  },
+});
+
+export default HomeScreen;
