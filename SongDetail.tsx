@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,11 +21,26 @@ interface SongDetailProps {
   route: RouteProp<RootStackParamList, 'SongDetail'>;
 }
 
+// Komponent do zmiany wielkości czcionki
+const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFontSize: (size: number) => void }) => {
+  return (
+    <View style={styles.controlsContainer}>
+      <TouchableOpacity onPress={() => setFontSize(fontSize + 2)} style={styles.controlButton}>
+        <Text style={styles.controlButtonText}>A+</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setFontSize(fontSize - 2)} style={styles.controlButton}>
+        <Text style={styles.controlButtonText}>A-</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   const { songId } = route.params;
   const [songDetail, setSongDetail] = useState<Song | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [fontSize, setFontSize] = useState<number>(16);
 
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
@@ -76,77 +91,42 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
             <Text style={styles.songName}>{songDetail?.name}</Text>
           </View>
           <Text style={styles.songCategory}>{songDetail?.category}</Text>
+          {/* Dodane przyciski do zmiany wielkości czcionki */}
+          <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} />
         </>
       }
       data={songDetail?.content || []}
       keyExtractor={(item, index) => index.toString()}
       renderItem={({ item, index }) => (
         <View style={styles.songContentRow}>
-          <Text style={styles.songNumber}>{index + 1}</Text>
-          <Text style={styles.songLyrics}>{item.lyrics || ''}</Text>
-          <Text style={styles.songChords}>{item.chords || ''}</Text>
+          <Text style={[styles.songNumber, { fontSize }]}>{index + 1}</Text>
+          <Text style={[styles.songLyrics, { fontSize }]}>{item.lyrics || ''}</Text>
+          <Text style={[styles.songChords, { fontSize }]}>{item.chords || ''}</Text>
         </View>
       )}
       contentContainerStyle={styles.container}
     />
   );
-  
 };
 
-const baseStyles = {
-  container: {
-    flexGrow: 1,
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row', 
-    justifyContent: 'center', // Wyśrodkowanie zawartości w poziomie
-    alignItems: 'center', // Wyśrodkowanie zawartości w pionie
-    backgroundColor: '#FF914D',
-    padding: 15,
-    borderRadius: 5,
-    width: '100%', // Upewnia się, że zajmuje całą szerokość
-  },
-  
-  songName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000000',
-    textAlign: 'center', // Wyśrodkowanie tekstu wewnątrz elementu
-    flexShrink: 1, // Zapobiega wychodzeniu poza ekran
-  },
-  songCategory: {
-    fontSize: 18,
-    marginVertical: 10,
-    textAlign: 'center',
-  },
-  songContentRow: {
+// Stylowanie
+const styles = StyleSheet.create({
+  controlsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start', // Wyrównanie górne
-    marginBottom: 10,
+    justifyContent: 'center',
+    marginVertical: 10,
   },
-  songNumber: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 10,
-    alignSelf: 'center',
+  controlButton: {
+    padding: 10,
+    marginHorizontal: 5,
+    backgroundColor: '#007AFF',
+    borderRadius: 5,
   },
-  songLyrics: {
-    flex: 3, // Większy udział w przestrzeni
-    fontSize: 16,
-    textAlign: 'left',
-    flexWrap: 'wrap', // Zawijanie tekstu
+  controlButtonText: {
+    color: 'white',
+    fontSize: 18,
   },
-  songChords: {
-    flex: 1, // Mniejszy udział w przestrzeni
-    fontSize: 16,
-    fontStyle: 'italic',
-    textAlign: 'right',
-    alignSelf: 'center', // Wyśrodkowanie w pionie względem tekstu
-    marginLeft: 10,
-  },
-};
+});
 
 const lightStyles = StyleSheet.create({
   container: {
@@ -155,132 +135,47 @@ const lightStyles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   header: {
-    flexDirection: 'row', 
-    justifyContent: 'center', // Wyśrodkowanie zawartości w poziomie
-    alignItems: 'center', // Wyśrodkowanie zawartości w pionie
+    alignItems: 'center',
     backgroundColor: '#FF914D',
     padding: 15,
     borderRadius: 5,
-    width: '100%', // Upewnia się, że zajmuje całą szerokość
   },
-  
   songName: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#000000',
-    textAlign: 'center', // Wyśrodkowanie tekstu wewnątrz elementu
-    flexShrink: 1, // Zapobiega wychodzeniu poza ekran
+    textAlign: 'center',
   },
   songCategory: {
     fontSize: 18,
-    marginBottom: 10,
+    marginVertical: 10,
     color: '#888888',
     textAlign: 'center',
-  },
-  songNumber: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 10,
-    color: '#000000',
-    alignSelf: 'center',
-  },
-  songLyrics: {
-    flex: 1,
-    fontSize: 16,
-    marginVertical: 5,
-    color: '#000000',
-    flexShrink: 1,
-    flexWrap: 'wrap', // Pozwala na zawijanie tekstu
-    textAlign: 'left',
-  },
-  songChords: {
-    fontSize: 16,
-    fontStyle: 'italic',
-    color: '#000000',
-    textAlign: 'right',
-    alignSelf: 'center', // Centrowanie akordów na wysokości tekstu
-    marginLeft: 10,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 18,
-    color: '#000000',
-  },
-  error: {
-    fontSize: 18,
-    marginTop: 20,
-    textAlign: 'center',
-    color: 'darkred',
   },
   songContentRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start', // Obsługa zawijania tekstu
-    marginBottom: 5,
-  },
-  songContentList: {
-    marginTop: 10,
-  },
-});
-
-const darkStyles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#000000',
-  },
-  header: {
-    flexDirection: 'row', 
-    justifyContent: 'center', // Wyśrodkowanie zawartości w poziomie
-    alignItems: 'center', // Wyśrodkowanie zawartości w pionie
-    backgroundColor: '#333333',
-    padding: 15,
-    borderRadius: 5,
-    width: '100%', // Upewnia się, że zajmuje całą szerokość
-  },
-  
-  songName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffcc00',
-    textAlign: 'center', // Wyśrodkowanie tekstu wewnątrz elementu
-    flexShrink: 1, // Zapobiega wychodzeniu poza ekran
-  },
-  songCategory: {
-    fontSize: 18,
     marginBottom: 10,
-    color: '#ffcc00',
-    textAlign: 'center',
   },
   songNumber: {
     fontSize: 16,
     fontWeight: 'bold',
     marginRight: 10,
-    color: '#ffcc00',
-    alignSelf: 'center',
+    color: '#000000',
   },
   songLyrics: {
-    flex: 1,
+    flex: 3,
     fontSize: 16,
-    marginVertical: 5,
-    color: '#ffffff',
-    flexShrink: 1,
-    flexWrap: 'wrap', // Pozwala na zawijanie tekstu
     textAlign: 'left',
   },
   songChords: {
+    flex: 1,
     fontSize: 16,
     fontStyle: 'italic',
-    color: '#ffcc00',
     textAlign: 'right',
-    alignSelf: 'center', // Centrowanie akordów na wysokości tekstu
     marginLeft: 10,
   },
+  // **Dodane brakujące style**
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -289,7 +184,7 @@ const darkStyles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 18,
-    color: '#ffffff',
+    color: '#000000',
   },
   error: {
     fontSize: 18,
@@ -297,16 +192,40 @@ const darkStyles = StyleSheet.create({
     textAlign: 'center',
     color: 'red',
   },
-  songContentRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start', // Obsługa zawijania tekstu
-    marginBottom: 5,
-  },
-  songContentList: {
-    marginTop: 10,
-  },
 });
 
+const darkStyles = StyleSheet.create({
+  ...lightStyles,
+  container: {
+    ...lightStyles.container,
+    backgroundColor: '#000000',
+  },
+  songName: {
+    ...lightStyles.songName,
+    color: '#fffff',
+  },
+  songCategory: {
+    ...lightStyles.songCategory,
+    color: '#ffcc00',
+  },
+  songNumber: {
+    ...lightStyles.songNumber,
+    color: '#ffcc00',
+  },
+  songLyrics: {
+    ...lightStyles.songLyrics,
+    color: '#ffffff',
+  },
+  songChords: {
+    ...lightStyles.songChords,
+    color: '#ffcc00',
+  },
+  loadingText: {
+    color: '#ffffff',
+  },
+  error: {
+    color: 'red',
+  },
+});
 
 export default SongDetail;
