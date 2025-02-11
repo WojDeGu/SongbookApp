@@ -8,3 +8,7 @@ Prosta aplikacja, która ma działać na iOS i android.
 - funkcja kategori 
 - przycisk, który pobiera listę piosenek z bazy danych
 
+**v1.1b ~11.02.2025**
+- funkcja zmiany czcionki w utworze
+- funkcja zmiany tonacji
+- zmiany wizualne ~ szczególnie dark mode
