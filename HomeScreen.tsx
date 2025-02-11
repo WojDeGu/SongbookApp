@@ -38,11 +38,21 @@ const HomeScreen: React.FC = () => {
 
   const fetchSongsFromAPI = async () => {
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(API_URL, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'SongbookApp',
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error('Niepoprawna odpowiedź serwera');
+      }
+  
       const data = await response.json();
-
       await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-
+  
       Alert.alert('Sukces', 'Piosenki zostały pobrane. Zresetuj aplikację.');
       setSongCount(data.length);
     } catch (error) {
@@ -50,6 +60,7 @@ const HomeScreen: React.FC = () => {
       console.error('Błąd pobierania piosenek:', error);
     }
   };
+  
 
   const updateFavorites = (favoriteIds: number[]) => {
     setFavoriteSongIds(favoriteIds);
