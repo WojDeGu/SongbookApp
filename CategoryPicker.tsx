@@ -99,8 +99,8 @@ const darkStyles = StyleSheet.create({
   },
   selectedItem: {
     borderWidth: 2,
-    backgroundColor: '#ffcc00',
-    borderColor: '#ffaa00',
+    backgroundColor: '#1E40AF',
+    borderColor: '#0056b3',
   },
   itemText: {
     fontSize: 16,
@@ -108,7 +108,7 @@ const darkStyles = StyleSheet.create({
   },
   selectedItemText: {
     fontWeight: 'bold',
-    color: '#000000', // Zmieniony na czarny dla ciemnego motywu
+    color: '#ffffff', // Zmieniony na czarny dla ciemnego motywu
   },
 });
 

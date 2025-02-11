@@ -99,7 +99,7 @@ const HomeScreen: React.FC = () => {
   };
 
   const styles = theme === 'light' ? lightStyles : darkStyles;
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Wybierz kategorię</Text>
@@ -110,7 +110,7 @@ const HomeScreen: React.FC = () => {
         <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} />
       </View>
 
-      <View style={styles.themeToggleContainer}>
+      <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
         <Switch value={theme === 'dark'} onValueChange={toggleTheme} />
       </View>
@@ -139,6 +139,7 @@ const lightStyles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+    textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#000000', // Czarny tekst
@@ -146,17 +147,12 @@ const lightStyles = StyleSheet.create({
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   switchLabel: {
     fontSize: 16,
     marginRight: 10,
     color: '#000000', // Czarny tekst
-  },
-  themeToggleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
   },
   button: {
     backgroundColor: '#007bff',
@@ -179,48 +175,29 @@ const lightStyles = StyleSheet.create({
 });
 
 const darkStyles = StyleSheet.create({
+  ...lightStyles,
   container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#000000', // Odwrócone z białego (czarne)
+    ...lightStyles.container,
+    backgroundColor: '#121212',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#ffffff', // Odwrócone z czarnego (białe)
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
+    ...lightStyles.title,
+    color: '#ffffff',
   },
   switchLabel: {
-    fontSize: 16,
-    marginRight: 10,
-    color: '#ffffff', // Odwrócone z czarnego (białe)
-  },
-  themeToggleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
+    ...lightStyles.switchLabel,
+    color: '#ffffff',
   },
   button: {
-    backgroundColor: '#1e90ff',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginVertical: 20,
+    ...lightStyles.button,
+    backgroundColor: '#1E40AF',
   },
   buttonText: {
+    ...lightStyles.buttonText,
     color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   songCount: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 10,
+    ...lightStyles.songCount,
     color: '#ffffff',
   },
 });

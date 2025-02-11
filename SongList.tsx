@@ -146,12 +146,12 @@ const darkStyles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#444',
-    backgroundColor: '#000000',
+    backgroundColor: '#121212',
   },
   songName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffcc00',
+    color: 'white',
   },
   songCategory: {
     fontSize: 16,

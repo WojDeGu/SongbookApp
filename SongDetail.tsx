@@ -4,6 +4,20 @@ import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Mapowanie akordów dla transpozycji
+const chords = ['C', 'c', 'Cis', 'cis', 'D', 'd', 'Dis', 'dis', 'E', 'e', 'F', 'f', 'Fis', 'fis', 'G', 'g', 'Gis', 'gis', 'A', 'a', 'B', 'b', 'H', 'h'];
+
+// Funkcja do transpozycji akordów
+const transposeChord = (chord: string, steps: number): string => {
+  return chord.replace(/Cis|cis|Dis|dis|Fis|fis|Gis|gis|[A-Ha-h]/g, (match) => {
+    const index = chords.indexOf(match);
+    if (index === -1) return match; // Jeśli to nie jest akord, pozostaw bez zmian
+    const newIndex = (index + steps + chords.length) % chords.length;
+    return chords[newIndex];
+  });
+};
+
+
 // Typowanie parametrów nawigacji
 type RootStackParamList = {
   HomeScreen: undefined;
@@ -23,13 +37,33 @@ interface SongDetailProps {
 
 // Komponent do zmiany wielkości czcionki
 const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFontSize: (size: number) => void }) => {
+  const { theme } = useTheme();
+  const styles = theme === 'light' ? lightStyles : darkStyles;
   return (
     <View style={styles.controlsContainer}>
+      <TouchableOpacity onPress={() => setFontSize(fontSize - 2)} style={styles.controlButton}>
+        <Text style={styles.controlButtonText}>A-</Text>
+      </TouchableOpacity>
+      <Text style={styles.transposeText}>Czcionka</Text>
       <TouchableOpacity onPress={() => setFontSize(fontSize + 2)} style={styles.controlButton}>
         <Text style={styles.controlButtonText}>A+</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setFontSize(fontSize - 2)} style={styles.controlButton}>
-        <Text style={styles.controlButtonText}>A-</Text>
+    </View>
+  );
+};
+
+// Komponent do zmiany tonacji
+const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; setTranspose: (steps: number) => void }) => {
+  const { theme } = useTheme();
+  const styles = theme === 'light' ? lightStyles : darkStyles;
+  return (
+    <View style={styles.controlsContainer}>
+      <TouchableOpacity onPress={() => setTranspose(transpose - 1)} style={styles.controlButton}>
+        <Text style={styles.controlButtonText}>-</Text>
+      </TouchableOpacity>
+      <Text style={styles.transposeText}>Tonacja: {transpose > 0 ? `+${transpose}` : transpose}</Text>
+      <TouchableOpacity onPress={() => setTranspose(transpose + 1)} style={styles.controlButton}>
+        <Text style={styles.controlButtonText}>+</Text>
       </TouchableOpacity>
     </View>
   );
@@ -41,6 +75,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState<number>(16);
+  const [transpose, setTranspose] = useState<number>(0);
 
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
@@ -82,7 +117,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   if (error) {
     return <Text style={styles.error}>{error}</Text>;
   }
-
+  
   return (
     <FlatList
       ListHeaderComponent={
@@ -91,8 +126,8 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
             <Text style={styles.songName}>{songDetail?.name}</Text>
           </View>
           <Text style={styles.songCategory}>{songDetail?.category}</Text>
-          {/* Dodane przyciski do zmiany wielkości czcionki */}
           <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} />
+          <TransposeAdjuster transpose={transpose} setTranspose={setTranspose} />
         </>
       }
       data={songDetail?.content || []}
@@ -101,19 +136,21 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
         <View style={styles.songContentRow}>
           <Text style={[styles.songNumber, { fontSize }]}>{index + 1}</Text>
           <Text style={[styles.songLyrics, { fontSize }]}>{item.lyrics || ''}</Text>
-          <Text style={[styles.songChords, { fontSize }]}>{item.chords || ''}</Text>
+          <Text style={[styles.songChords, { fontSize }]}>{item.chords ? transposeChord(item.chords, transpose) : ''}</Text>
         </View>
       )}
       contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
     />
   );
 };
 
-// Stylowanie
-const styles = StyleSheet.create({
+
+const lightStyles = StyleSheet.create({
   controlsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     marginVertical: 10,
   },
   controlButton: {
@@ -125,10 +162,20 @@ const styles = StyleSheet.create({
   controlButtonText: {
     color: 'white',
     fontSize: 18,
+    fontWeight: 'bold',
   },
-});
-
-const lightStyles = StyleSheet.create({
+  transposeControlsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  transposeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#888888',
+    marginHorizontal: 10,
+  },
   container: {
     flexGrow: 1,
     padding: 20,
@@ -136,20 +183,20 @@ const lightStyles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    backgroundColor: '#FF914D',
+    backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 5,
   },
   songName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000000',
+    color: 'white',
     textAlign: 'center',
   },
   songCategory: {
     fontSize: 18,
     marginVertical: 10,
-    color: '#888888',
+    color: '#666666',
     textAlign: 'center',
   },
   songContentRow: {
@@ -161,12 +208,13 @@ const lightStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginRight: 10,
-    color: '#000000',
+    color: '#333333',
   },
   songLyrics: {
     flex: 3,
     fontSize: 16,
     textAlign: 'left',
+    color: '#111111',
   },
   songChords: {
     flex: 1,
@@ -174,8 +222,8 @@ const lightStyles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'right',
     marginLeft: 10,
+    color: '#005BBB',
   },
-  // **Dodane brakujące style**
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -184,7 +232,7 @@ const lightStyles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 18,
-    color: '#000000',
+    color: '#222222',
   },
   error: {
     fontSize: 18,
@@ -198,30 +246,38 @@ const darkStyles = StyleSheet.create({
   ...lightStyles,
   container: {
     ...lightStyles.container,
-    backgroundColor: '#000000',
+    backgroundColor: '#121212',
   },
-  songName: {
-    ...lightStyles.songName,
-    color: '#fffff',
+  header: {
+    ...lightStyles.header,
+    backgroundColor: '#1E40AF',
   },
   songCategory: {
     ...lightStyles.songCategory,
-    color: '#ffcc00',
+    color: '#bbbbbb',
+  },
+  controlButton: {
+    ...lightStyles.controlButton,
+    backgroundColor: '#1E40AF',
+  },
+  transposeText: {
+    ...lightStyles.transposeText,
+    color: 'white',
   },
   songNumber: {
     ...lightStyles.songNumber,
-    color: '#ffcc00',
+    color: '#FFA726',
   },
   songLyrics: {
     ...lightStyles.songLyrics,
-    color: '#ffffff',
+    color: '#DDDDDD',
   },
   songChords: {
     ...lightStyles.songChords,
-    color: '#ffcc00',
+    color: '#FFCC00',
   },
   loadingText: {
-    color: '#ffffff',
+    color: '#E0E0E0',
   },
   error: {
     color: 'red',

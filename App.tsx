@@ -30,9 +30,9 @@ const AppNavigator: React.FC = () => {
       initialRouteName="HomeScreen"
       screenOptions={{
         headerStyle: {
-          backgroundColor: theme === 'light' ? '#ffffff' : '#000000', // Białe tło w trybie jasnym, czarne w ciemnym
+          backgroundColor: theme === 'light' ? '#ffffff' : '#121212', // Białe tło w trybie jasnym, czarne w ciemnym
         },
-        headerTintColor: theme === 'light' ? '#000000' : '#ffffff', // Czarny tekst w trybie jasnym, biały w ciemnym
+        headerTintColor: theme === 'light' ? '#121212' : '#ffffff', // Czarny tekst w trybie jasnym, biały w ciemnym
         headerTitleStyle: {
           fontWeight: 'bold',
         },
