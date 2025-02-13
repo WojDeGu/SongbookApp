@@ -19,11 +19,12 @@ interface SongListProps {
   favoritesOnly: boolean;
   favoriteSongIds: number[];
   updateFavorites: (favoriteIds: number[]) => void;
+  searchQuery: string;
 }
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'SongDetail'>;
 
-const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, favoriteSongIds, updateFavorites }) => {
+const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, favoriteSongIds, updateFavorites, searchQuery }) => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +61,9 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
     if (selectedCategory && song.category !== selectedCategory) {
       return false;
     }
+    if (searchQuery && !song.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
     return true;
   });
 
@@ -94,8 +98,10 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <TouchableOpacity style={styles.songItem} onPress={() => handlePress(item.id)}>
-          <Text style={styles.songName}>{item.name}</Text>
-          <Text style={styles.songCategory}>{item.category}</Text>
+          <View style={styles.songTextContainer}>
+            <Text style={styles.songName}>{item.name}</Text>
+            <Text style={styles.songCategory}>{item.category}</Text>
+          </View>
           <FavoriteButton
             songId={item.id}
             isFavorite={favoriteSongIds.includes(item.id)}
@@ -108,7 +114,13 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
 };
 
 const lightStyles = StyleSheet.create({
+  songTextContainer: {
+    flex: 1, // Zapobiega ściskaniu tekstu, zajmuje dostępną przestrzeń
+  },
   songItem: {
+    flexDirection: 'row', // Ustawienie elementów w jednej linii
+    alignItems: 'center', // Wyrównanie do środka w pionie
+    justifyContent: 'space-between', // Tekst po lewej, przycisk po prawej
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
@@ -142,7 +154,13 @@ const lightStyles = StyleSheet.create({
 });
 
 const darkStyles = StyleSheet.create({
+  songTextContainer:{
+    flex: 1,
+  },
   songItem: {
+    flexDirection: 'row', // Ustawienie elementów w jednej linii
+    alignItems: 'center', // Wyrównanie do środka w pionie
+    justifyContent: 'space-between', // Tekst po lewej, przycisk po prawej
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#444',

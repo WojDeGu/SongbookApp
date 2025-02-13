@@ -4,6 +4,7 @@ import CategoryPicker from './CategoryPicker';
 import SongList from './SongList';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SongSearch from './SongSearch';
 
 const API_URL = 'https://songbook.slowkodaje.pl/api.php';
 const LOCAL_STORAGE_KEY = 'songbook.json';
@@ -14,7 +15,7 @@ const HomeScreen: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [favoriteSongIds, setFavoriteSongIds] = useState<number[]>([]);
   const [songCount, setSongCount] = useState<number | null>(null);
-  
+  const [searchQuery, setSearchQuery] = useState<string>('');  
 
   useEffect(() => {
     loadFavoritesOnly();
@@ -67,6 +68,10 @@ const HomeScreen: React.FC = () => {
     AsyncStorage.setItem('favoriteSongs', JSON.stringify(favoriteIds));
   };
 
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };  
+
   const handleCategoryChange = (category: string | null) => {
     setSelectedCategory(category);
   };
@@ -102,19 +107,22 @@ const HomeScreen: React.FC = () => {
   
   return (
     <View style={styles.container}>
+      <SongSearch searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+
       <Text style={styles.title}>Wybierz kategorię</Text>
       <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={handleCategoryChange} />
+      <View style={styles.switches}>
+        <View style={styles.switchContainer}>
+          <Text style={styles.switchLabel}>Ulubione</Text>
+          <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} />
+        </View>
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Ulubione</Text>
-        <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} />
+        <View style={styles.switchContainer}>
+          <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
+          <Switch value={theme === 'dark'} onValueChange={toggleTheme} />
+        </View>
       </View>
-
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
-        <Switch value={theme === 'dark'} onValueChange={toggleTheme} />
-      </View>
-
+      
       <TouchableOpacity style={styles.button} onPress={fetchSongsFromAPI}>
         <Text style={styles.buttonText}>Pobierz piosenki</Text>
       </TouchableOpacity>
@@ -125,7 +133,8 @@ const HomeScreen: React.FC = () => {
       selectedCategory={selectedCategory} 
       favoritesOnly={favoritesOnly} 
       favoriteSongIds={favoriteSongIds} 
-      updateFavorites={updateFavorites} />
+      updateFavorites={updateFavorites}
+      searchQuery={searchQuery}  />
     </View>
   );
 };
@@ -143,6 +152,10 @@ const lightStyles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#000000', // Czarny tekst
+  },
+  switches:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   switchContainer: {
     flexDirection: 'row',
