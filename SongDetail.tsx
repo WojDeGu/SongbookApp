@@ -17,7 +17,6 @@ const transposeChord = (chord: string, steps: number): string => {
   });
 };
 
-
 // Typowanie parametrów nawigacji
 type RootStackParamList = {
   HomeScreen: undefined;

@@ -115,12 +115,12 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
 
 const lightStyles = StyleSheet.create({
   songTextContainer: {
-    flex: 1, // Zapobiega ściskaniu tekstu, zajmuje dostępną przestrzeń
+    flex: 1,
   },
   songItem: {
-    flexDirection: 'row', // Ustawienie elementów w jednej linii
-    alignItems: 'center', // Wyrównanie do środka w pionie
-    justifyContent: 'space-between', // Tekst po lewej, przycisk po prawej
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
@@ -158,9 +158,9 @@ const darkStyles = StyleSheet.create({
     flex: 1,
   },
   songItem: {
-    flexDirection: 'row', // Ustawienie elementów w jednej linii
-    alignItems: 'center', // Wyrównanie do środka w pionie
-    justifyContent: 'space-between', // Tekst po lewej, przycisk po prawej
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#444',

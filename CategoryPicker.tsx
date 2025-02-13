@@ -73,7 +73,7 @@ const lightStyles = StyleSheet.create({
   },
   selectedItemText: {
     fontWeight: 'bold',
-    color: '#ffffff', // Zmieniony na biały dla jasnego motywu
+    color: '#ffffff',
   },
 });
 
@@ -108,7 +108,7 @@ const darkStyles = StyleSheet.create({
   },
   selectedItemText: {
     fontWeight: 'bold',
-    color: '#ffffff', // Zmieniony na czarny dla ciemnego motywu
+    color: '#ffffff',
   },
 });
 

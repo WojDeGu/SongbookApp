@@ -144,14 +144,14 @@ const lightStyles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#ffffff', // Białe tło
+    backgroundColor: '#ffffff',
   },
   title: {
     fontSize: 24,
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#000000', // Czarny tekst
+    color: '#000000',
   },
   switches:{
     flexDirection: 'row',
@@ -165,7 +165,7 @@ const lightStyles = StyleSheet.create({
   switchLabel: {
     fontSize: 16,
     marginRight: 10,
-    color: '#000000', // Czarny tekst
+    color: '#000000',
   },
   button: {
     backgroundColor: '#007bff',
