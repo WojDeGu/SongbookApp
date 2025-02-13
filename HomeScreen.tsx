@@ -5,7 +5,7 @@ import SongList from './SongList';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://swefiles.swe.pl/api.php';
+const API_URL = 'https://songbook.slowkodaje.pl/api.php';
 const LOCAL_STORAGE_KEY = 'songbook.json';
 
 const HomeScreen: React.FC = () => {
