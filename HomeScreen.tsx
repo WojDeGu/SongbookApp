@@ -5,6 +5,7 @@ import SongList from './SongList';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SongSearch from './SongSearch';
+import { Svg, Path } from 'react-native-svg';
 
 const API_URL = 'https://songbook.slowkodaje.pl/api.php';
 const LOCAL_STORAGE_KEY = 'songbook.json';
@@ -15,7 +16,8 @@ const HomeScreen: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [favoriteSongIds, setFavoriteSongIds] = useState<number[]>([]);
   const [songCount, setSongCount] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');  
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);  
 
   useEffect(() => {
     loadFavoritesOnly();
@@ -103,12 +105,14 @@ const HomeScreen: React.FC = () => {
     }
   };
 
+  const toggleSearch = () => {
+    setIsSearchVisible(!isSearchVisible);
+  }
+
   const styles = theme === 'light' ? lightStyles : darkStyles;
   
   return (
     <View style={styles.container}>
-      <SongSearch searchQuery={searchQuery} onSearchChange={handleSearchChange} />
-
       <Text style={styles.title}>Wybierz kategorię</Text>
       <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={handleCategoryChange} />
       <View style={styles.switches}>
@@ -117,18 +121,24 @@ const HomeScreen: React.FC = () => {
           <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} />
         </View>
 
-        <View style={styles.switchContainer}>
-          <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
-          <Switch value={theme === 'dark'} onValueChange={toggleTheme} />
-        </View>
+        <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>
+          <Svg width={28} height={28} viewBox="0 0 24 24" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <Path 
+              stroke={theme === 'light' ? '#000' : '#fff'} 
+              d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+            />
+          </Svg>
+        </TouchableOpacity>
       </View>
-      
+
+      {songCount === 0 && (
       <TouchableOpacity style={styles.button} onPress={fetchSongsFromAPI}>
         <Text style={styles.buttonText}>Pobierz piosenki</Text>
       </TouchableOpacity>
+      )}
 
-      {songCount !== null && <Text style={styles.songCount}>Liczba piosenek: {songCount}</Text>}
-
+      {isSearchVisible && <SongSearch searchQuery={searchQuery} onSearchChange={handleSearchChange} />}
+      
       <SongList 
       selectedCategory={selectedCategory} 
       favoritesOnly={favoritesOnly} 
@@ -155,6 +165,7 @@ const lightStyles = StyleSheet.create({
   },
   switches:{
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   switchContainer: {
@@ -166,6 +177,13 @@ const lightStyles = StyleSheet.create({
     fontSize: 16,
     marginRight: 10,
     color: '#000000',
+  },
+  searchButton: {
+    width: 40,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 5,
   },
   button: {
     backgroundColor: '#007bff',

@@ -46,7 +46,7 @@ const AppNavigator: React.FC = () => {
     },
     headerRight: () =>
       route.name !== 'SettingsScreen' ? ( // Ukrywa headerRight na SettingsScreen
-        <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
+        <TouchableOpacity style={{ marginRight: 15 }}onPress={() => navigation.navigate('SettingsScreen')}>
           <SettingsIcon size={28} color={theme === 'light' ? '#304052' : 'white'} secondcolor={theme === 'dark' ? '#304052' : 'white'}/>
         </TouchableOpacity>
       ) : null,
