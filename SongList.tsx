@@ -5,6 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './App';
 import { useTheme } from './ThemeContext';
 import FavoriteButton from './FavoriteButton';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Importujemy AsyncStorage
 
 interface Song {
@@ -25,7 +26,7 @@ interface SongListProps {
 type NavigationProp = StackNavigationProp<RootStackParamList, 'SongDetail'>;
 
 const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, favoriteSongIds, updateFavorites, searchQuery }) => {
-  const [songs, setSongs] = useState<Song[]>([]);
+  const [songs, setSongs] = useState<Song[]>(() => []);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp>();
@@ -53,8 +54,24 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   
     loadSongs();
   }, []);
-
-  const filteredSongs = songs.filter(song => {
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadSongs = async () => {
+        try {
+          const storedSongs = await AsyncStorage.getItem('songbook.json');
+          if (storedSongs) {
+            setSongs(JSON.parse(storedSongs));
+          }
+        } catch (error) {
+          console.error('Błąd przy wczytywaniu piosenek:', error);
+        }
+      };
+      loadSongs();
+    }, [])
+  );
+  
+  const filteredSongs = (songs || []).filter(song => {
     if (favoritesOnly && !favoriteSongIds.includes(song.id)) {
       return false;
     }
@@ -94,6 +111,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
 
   return (
     <FlatList
+      key={songs.length}
       data={filteredSongs}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (

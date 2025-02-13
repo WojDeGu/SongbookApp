@@ -17,7 +17,8 @@ const HomeScreen: React.FC = () => {
   const [favoriteSongIds, setFavoriteSongIds] = useState<number[]>([]);
   const [songCount, setSongCount] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);  
+  const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
+  const [songs, setSongs] = useState<any[]>([]);
 
   useEffect(() => {
     loadFavoritesOnly();
@@ -30,6 +31,7 @@ const HomeScreen: React.FC = () => {
       const storedData = await AsyncStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedData) {
         const songs = JSON.parse(storedData);
+        setSongs(songs);
         setSongCount(songs.length);
       } else {
         setSongCount(0);
@@ -56,11 +58,25 @@ const HomeScreen: React.FC = () => {
       const data = await response.json();
       await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
   
-      Alert.alert('Sukces', 'Piosenki zostały pobrane. Zresetuj aplikację.');
+      setSongs([...data]);
       setSongCount(data.length);
+      refreshSongs();
+  
+      Alert.alert('Sukces', 'Piosenki zostały pobrane.');
     } catch (error) {
       Alert.alert('Błąd', 'Nie udało się pobrać piosenek.');
       console.error('Błąd pobierania piosenek:', error);
+    }
+  };
+  
+  const refreshSongs = async () => {
+    try {
+      const storedSongs = await AsyncStorage.getItem(LOCAL_STORAGE_KEY);
+      if (storedSongs) {
+        setSongs(JSON.parse(storedSongs));
+      }
+    } catch (error) {
+      console.error('Błąd odświeżania piosenek:', error);
     }
   };
   
@@ -140,6 +156,7 @@ const HomeScreen: React.FC = () => {
       {isSearchVisible && <SongSearch searchQuery={searchQuery} onSearchChange={handleSearchChange} />}
       
       <SongList 
+      key={songs.length}
       selectedCategory={selectedCategory} 
       favoritesOnly={favoritesOnly} 
       favoriteSongIds={favoriteSongIds} 

@@ -49,7 +49,7 @@ const SettingsScreen: React.FC = () => {
       const data = await response.json();
       await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
 
-      Alert.alert('Sukces', 'Piosenki zostały pobrane i zapisane.');
+      Alert.alert('Sukces', 'Lista piosenek została pobrana i zapisana.');
       setSongCount(data.length);
     } catch (error) {
       Alert.alert('Błąd', 'Nie udało się pobrać piosenek.');
