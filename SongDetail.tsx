@@ -4,16 +4,21 @@ import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Mapowanie akordów dla transpozycji
-const chords = ['C', 'c', 'Cis', 'cis', 'D', 'd', 'Dis', 'dis', 'E', 'e', 'F', 'f', 'Fis', 'fis', 'G', 'g', 'Gis', 'gis', 'A', 'a', 'B', 'b', 'H', 'h'];
+const majorChords = ['C', 'Cis', 'D', 'Dis', 'E', 'F', 'Fis', 'G', 'Gis', 'A', 'B', 'H'];
+const minorChords = ['c', 'cis', 'd', 'dis', 'e', 'f', 'fis', 'g', 'gis', 'a', 'b', 'h'];
 
-// Funkcja do transpozycji akordów
-const transposeChord = (chord: string, steps: number): string => {
-  return chord.replace(/Cis|cis|Dis|dis|Fis|fis|Gis|gis|[A-Ha-h]/g, (match) => {
-    const index = chords.indexOf(match);
-    if (index === -1) return match; // Jeśli to nie jest akord, pozostaw bez zmian
-    const newIndex = (index + steps + chords.length) % chords.length;
-    return chords[newIndex];
+// Funkcja do transpozycji akordów w całym tekście
+const transposeChord = (line: string, steps: number): string => {
+  return line.replace(/\b(Cis|Dis|Fis|Gis|cis|dis|fis|gis|[A-Ha-h])\b/g, (match) => {
+    const isMajor = majorChords.includes(match);
+    const isMinor = minorChords.includes(match);
+    if (!isMajor && !isMinor) return match; // Jeśli to nie akord, pozostaje bez zmian
+
+    const chordsList = isMajor ? majorChords : minorChords;
+    const index = chordsList.indexOf(match);
+    const newIndex = (index + steps + chordsList.length) % chordsList.length;
+
+    return chordsList[newIndex];
   });
 };
 
