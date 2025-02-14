@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, DeviceEventEmitter } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import { RouteProp } from '@react-navigation/native';
@@ -105,6 +105,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   const [error, setError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState<number>(16);
   const [transpose, setTranspose] = useState<number>(0);
+  const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(true);
 
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
@@ -131,8 +132,21 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
         setIsLoading(false);
       }
     };
-
+    const loadSettings = async () => {
+      const storedValue = await AsyncStorage.getItem('showFontSizeAdjuster');
+      if (storedValue !== null) {
+        setShowFontSizeAdjuster(JSON.parse(storedValue));
+      }
+    };
+    
     fetchSongDetail();
+    loadSettings();
+    const subscription = DeviceEventEmitter.addListener('updateFontSizeAdjuster', (value: boolean) => {
+      setShowFontSizeAdjuster(value);
+    });
+    return () => {
+      subscription.remove(); // Usuwamy nasłuch, gdy komponent zostanie odmontowany
+    };
   }, [songId]);
 
   if (isLoading) {
@@ -157,7 +171,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
             <Text style={styles.songName}>{songDetail?.name}</Text>
           </View>
           <Text style={styles.songCategory}>{songDetail?.category}</Text>
-          <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} />
+          {showFontSizeAdjuster && <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} /> }
           <TransposeAdjuster transpose={transpose} setTranspose={setTranspose} />
         </>
       }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
+
 
 const API_URL = 'https://songbook.slowkodaje.pl/api.php';
 const LOCAL_STORAGE_KEY = 'songbook.json';
@@ -10,10 +11,26 @@ const SettingsScreen: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [songCount, setSongCount] = useState<number | null>(null);
+  const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
 
   useEffect(() => {
       checkLocalData();
+      const loadSettings = async () => {
+        const storedValue = await AsyncStorage.getItem('showFontSizeAdjuster');
+        if (storedValue !== null) {
+          setShowFontSizeAdjuster(JSON.parse(storedValue));
+        }
+      };
+      loadSettings();
     }, []);
+
+    const toggleFontSizeAdjuster = async () => {
+        const newValue = !showFontSizeAdjuster;
+        setShowFontSizeAdjuster(newValue);
+        await AsyncStorage.setItem('showFontSizeAdjuster', JSON.stringify(newValue));
+
+        DeviceEventEmitter.emit('updateFontSizeAdjuster', newValue); // Wysyłamy event
+      };
 
   const checkLocalData = async () => {
     try {
@@ -73,6 +90,11 @@ const SettingsScreen: React.FC = () => {
         <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
         <Switch value={theme === 'dark'} onValueChange={toggleTheme} />
       </View>
+
+        <View style={styles.switchContainer}>
+            <Text style={styles.switchLabel}>Pokaż regulator czcionki</Text>
+            <Switch value={showFontSizeAdjuster} onValueChange={toggleFontSizeAdjuster} />
+        </View>
     </View>
   );
 };
