@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "876172140306",
+    "project_id": "songbookapp-254fe",
+    "storage_bucket": "songbookapp-254fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876172140306:android:aa8d26b91f108786369dcb",
+        "android_client_info": {
+          "package_name": "com.songbookapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAy_YspwiAlJqRzQMvU54n6qx8Y3O5Pm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
