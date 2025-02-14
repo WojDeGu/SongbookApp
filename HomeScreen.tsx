@@ -5,6 +5,7 @@ import SongList from './SongList';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SongSearch from './SongSearch';
+import AdBanner from './AdBanner';
 import { Svg, Path } from 'react-native-svg';
 
 const API_URL = 'https://songbook.slowkodaje.pl/api.php';
@@ -129,6 +130,7 @@ const HomeScreen: React.FC = () => {
   
   return (
     <View style={styles.container}>
+      <AdBanner />
       <Text style={styles.title}>Wybierz kategorię</Text>
       <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={handleCategoryChange} />
       <View style={styles.switches}>
