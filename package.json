@@ -20,7 +20,7 @@
     "react-dom": "^18.2.0",
     "react-native": "^0.77.0",
     "react-native-dev-menu": "^4.1.1",
-    "react-native-gesture-handler": "^2.23.0",
+    "react-native-gesture-handler": "^2.23.1",
     "react-native-google-mobile-ads": "^14.9.0",
     "react-native-heroicons": "^4.0.0",
     "react-native-picker-select": "^9.3.1",
@@ -30,6 +30,7 @@
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^15.11.1",
     "react-native-vector-icons": "^10.2.0",
+    "react-native-zoomable-view": "^0.3.1",
     "styled-components": "^6.1.15"
   },
   "devDependencies": {

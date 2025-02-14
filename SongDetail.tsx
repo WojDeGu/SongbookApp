@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-reanimated';
 import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,16 +11,16 @@ const minorChords = ['c', 'cis', 'd', 'dis', 'e', 'f', 'fis', 'g', 'gis', 'a', '
 
 // Funkcja do transpozycji akordów w całym tekście
 const transposeChord = (line: string, steps: number): string => {
-  return line.replace(/\b(Cis|Dis|Fis|Gis|cis|dis|fis|gis|[A-Ha-h])\b/g, (match) => {
-    const isMajor = majorChords.includes(match);
-    const isMinor = minorChords.includes(match);
+  return line.replace(/\b(Cis|Dis|Fis|Gis|cis|dis|fis|gis|[A-Ha-h])([#b]?m?\d*\+?\-?\w*)?\b/g, (match, root, suffix = '') => {
+    const isMajor = majorChords.includes(root);
+    const isMinor = minorChords.includes(root);
     if (!isMajor && !isMinor) return match; // Jeśli to nie akord, pozostaje bez zmian
 
     const chordsList = isMajor ? majorChords : minorChords;
-    const index = chordsList.indexOf(match);
+    const index = chordsList.indexOf(root);
     const newIndex = (index + steps + chordsList.length) % chordsList.length;
 
-    return chordsList[newIndex];
+    return chordsList[newIndex] + suffix;
   });
 };
 
@@ -44,17 +46,40 @@ const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFont
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
   return (
-    <View style={styles.controlsContainer}>
-      <TouchableOpacity onPress={() => setFontSize(fontSize - 2)} style={styles.controlButton}>
-        <Text style={styles.controlButtonText}>A-</Text>
-      </TouchableOpacity>
-      <Text style={styles.transposeText}>Czcionka</Text>
-      <TouchableOpacity onPress={() => setFontSize(fontSize + 2)} style={styles.controlButton}>
-        <Text style={styles.controlButtonText}>A+</Text>
-      </TouchableOpacity>
-    </View>
+    
+      <View style={styles.controlsContainer}>
+        <TouchableOpacity onPress={() => setFontSize(fontSize - 2)} style={styles.controlButton}>
+          <Text style={styles.controlButtonText}>A-</Text>
+        </TouchableOpacity>
+        <Text style={styles.transposeText}>Czcionka</Text>
+        <TouchableOpacity onPress={() => setFontSize(fontSize + 2)} style={styles.controlButton}>
+          <Text style={styles.controlButtonText}>A+</Text>
+        </TouchableOpacity>
+      </View>
+
   );
 };
+
+// Komponent do obsługi gestami
+const usePinchToZoom = (fontSize: number, setFontSize: (size: number) => void) => {
+  const [baseFontSize, setBaseFontSize] = useState(fontSize);
+
+  const handlePinch = (scale: number) => {
+    'worklet';
+    const newSize = Math.max(10, Math.min(baseFontSize * scale, 50));
+    runOnJS(setFontSize)(newSize);
+  };
+
+  return Gesture.Pinch()
+    .onBegin(() => {
+      'worklet';
+      runOnJS(setBaseFontSize)(fontSize);
+    })
+    .onUpdate((event) => {
+      handlePinch(event.scale);
+    });
+};
+
 
 // Komponent do zmiany tonacji
 const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; setTranspose: (steps: number) => void }) => {
@@ -83,6 +108,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
 
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
+  const pinchGesture = usePinchToZoom(fontSize, setFontSize);
 
   useEffect(() => {
     const fetchSongDetail = async () => {
@@ -123,6 +149,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   }
   
   return (
+    <GestureDetector gesture={pinchGesture}>
     <FlatList
       ListHeaderComponent={
         <>
@@ -146,6 +173,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     />
+    </GestureDetector>
   );
 };
 
