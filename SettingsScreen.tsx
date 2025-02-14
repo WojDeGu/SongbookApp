@@ -125,7 +125,7 @@ const lightStyles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 15,
   },
   buttonText: {
     color: '#ffffff',
@@ -133,7 +133,8 @@ const lightStyles = StyleSheet.create({
     fontWeight: 'bold',
   },
   songCount: {
-    fontSize: 16,
+    marginTop: 10,
+    fontSize: 24,
     textAlign: 'center',
     marginBottom: 10,
     color: '#000000',
