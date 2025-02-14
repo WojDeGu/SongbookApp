@@ -22,3 +22,4 @@ Prosta aplikacja, która ma działać na iOS i android.
 - dostosowanie aplikacji do eksportu na iOS i Android
 - dodanie baneru z reklamą
 - funkcja wyszukiwarki
+- dodanie przycisku do pokazywania przycisków zmiany czcionki w ustawieniach
