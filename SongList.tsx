@@ -54,7 +54,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   
     loadSongs();
   }, []);
-  
+
   useFocusEffect(
     React.useCallback(() => {
       const loadSongs = async () => {
@@ -82,7 +82,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
       return false;
     }
     return true;
-  });
+  }).sort((a, b) => a.name.localeCompare(b.name));
 
   const handlePress = (songId: number) => {
     navigation.navigate('SongDetail', { songId });
