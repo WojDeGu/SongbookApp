@@ -111,6 +111,45 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   const styles = theme === 'light' ? lightStyles : darkStyles;
   const pinchGesture = usePinchToZoom(fontSize, setFontSize);
 
+  const renderSongContent = (content: { lyrics: string; chords?: string }[]) => {
+    let isChorus = false;
+    let chorusStartIndex: number | null = null;
+  
+    return content.map((item, index) => {
+      const isChorusStart = /^Ref[\.:]/i.test(item.lyrics.trim());
+      const isVerseStart = /^\d+\./.test(item.lyrics.trim());
+  
+      if (isChorusStart) {
+        isChorus = true;
+        chorusStartIndex = index;
+      }
+  
+      // Gdy pojawia się numerowana zwrotka, kończymy refren
+      if (isChorus && isVerseStart) {
+        isChorus = false;
+      }
+  
+      return (
+        <View 
+          key={index} 
+          style={[
+            styles.songContentRow,
+            index === chorusStartIndex ? { marginTop: 15 } : {}, // Odstęp przed refrenem
+            isVerseStart && !isChorusStart ? { marginTop: 15 } : {} // Odstęp po refrenie przed zwrotką
+          ]}
+        >
+          <Text style={[styles.songLyrics, { fontSize }, isChorus && { fontWeight: "bold" }]}>
+            {item.lyrics || ''}
+          </Text>
+          <Text style={[styles.songChords, { fontSize }]}>
+            {item.chords ? transposeChord(item.chords, transpose) : ''}
+          </Text>
+        </View>
+      );
+    });
+  };
+    
+
   useEffect(() => {
     const fetchSongDetail = async () => {
       try {
@@ -147,6 +186,8 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
     return () => {
       subscription.remove(); // Usuwamy nasłuch, gdy komponent zostanie odmontowany
     };
+
+    
   }, [songId]);
 
   if (isLoading) {
@@ -177,13 +218,8 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
       }
       data={songDetail?.content || []}
       keyExtractor={(item, index) => index.toString()}
-      renderItem={({ item, index }) => (
-        <View style={styles.songContentRow}>
-          <Text style={[styles.songNumber, { fontSize }]}>{index + 1}</Text>
-          <Text style={[styles.songLyrics, { fontSize }]}>{item.lyrics || ''}</Text>
-          <Text style={[styles.songChords, { fontSize }]}>{item.chords ? transposeChord(item.chords, transpose) : ''}</Text>
-        </View>
-      )}
+      renderItem={null} // Nie używamy domyślnego `renderItem`
+      ListFooterComponent={<View>{renderSongContent(songDetail?.content || [])}</View>}
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     />
