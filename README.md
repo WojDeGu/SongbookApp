@@ -12,3 +12,13 @@ Prosta aplikacja, która ma działać na iOS i android.
 - funkcja zmiany czcionki w utworze
 - funkcja zmiany tonacji
 - zmiany wizualne ~ szczególnie dark mode
+
+**v1.2b ~14.02.2025**
+- dodanie ustawień
+- przeniesienie przycisku darkMode i przycisku aktualizacji listy piosenek do ustawień
+- przycisk do pobierania listy na głównym ekranie pojawia się tylko raz, gdy nie ma pobranej listy
+- funkcja zmiany czcionki gestami
+- zmiany wizualne w interfejsie
+- dostosowanie aplikacji do eksportu na iOS i Android
+- dodanie baneru z reklamą
+- funkcja wyszukiwarki
