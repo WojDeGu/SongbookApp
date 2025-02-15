@@ -105,7 +105,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   const [error, setError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState<number>(16);
   const [transpose, setTranspose] = useState<number>(0);
-  const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(true);
+  const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
 
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
@@ -141,7 +141,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
           <Text style={[styles.songLyrics, { fontSize }, isChorus && { fontWeight: "bold" }]}>
             {item.lyrics || ''}
           </Text>
-          <Text style={[styles.songChords, { fontSize }]}>
+          <Text style={[styles.songChords, { fontSize }, isChorus && { fontWeight: "bold" }]}>
             {item.chords ? transposeChord(item.chords, transpose) : ''}
           </Text>
         </View>
@@ -284,6 +284,7 @@ const lightStyles = StyleSheet.create({
   songContentRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignContent: 'center',
     marginBottom: 10,
   },
   songNumber: {

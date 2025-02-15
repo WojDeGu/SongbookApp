@@ -7,6 +7,9 @@ import SettingsScreen from './SettingsScreen';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { TouchableOpacity } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
+import { useEffect } from 'react';
+import { requestTrackingPermission } from 'react-native-tracking-transparency';
+
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -44,6 +47,7 @@ const AppNavigator: React.FC = () => {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
+    headerTitleAlign: 'center',
     headerRight: () =>
       route.name !== 'SettingsScreen' ? ( // Ukrywa headerRight na SettingsScreen
         <TouchableOpacity style={{ marginRight: 15 }}onPress={() => navigation.navigate('SettingsScreen')}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, Platform } from 'react-native';
 import CategoryPicker from './CategoryPicker';
 import SongList from './SongList';
 import { useTheme } from './ThemeContext';
@@ -7,6 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SongSearch from './SongSearch';
 import AdBanner from './AdBanner';
 import { Svg, Path } from 'react-native-svg';
+import {AdsConsent, AdsConsentDebugGeography, AdsConsentStatus } from 'react-native-google-mobile-ads';
+import { requestTrackingPermission } from 'react-native-tracking-transparency';
 
 const API_URL = 'https://songbook.slowkodaje.pl/api.php';
 const LOCAL_STORAGE_KEY = 'songbook.json';
@@ -21,11 +23,49 @@ const HomeScreen: React.FC = () => {
   const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
   const [songs, setSongs] = useState<any[]>([]);
 
+  const requestATT = async () => {
+    if (Platform.OS === 'ios') {
+      const status = await requestTrackingPermission();
+      console.log('ATT Status:', status);
+      
+      if (status === 'not-determined') {
+        Alert.alert('Prośba o zgodę', 'Aplikacja prosi o zgodę na śledzenie.');
+      }
+    }
+  };
+  
+
   useEffect(() => {
     loadFavoritesOnly();
     loadFavoriteSongs();
     checkLocalData();
+    requestATT();
+    
+    if (Platform.OS === 'android') {
+      checkPrivacyConsent();
+    }
   }, []);
+
+  const checkPrivacyConsent = async () => {
+    try {
+      const hasSeenConsent = await AsyncStorage.getItem('hasSeenConsent');
+  
+      if (!hasSeenConsent) {
+        // Pobieramy status zgody
+        const consentInfo = await AdsConsent.requestInfoUpdate();
+        
+        // Jeśli zgoda jest wymagana, otwieramy formularz
+        if (consentInfo.status === AdsConsentStatus.REQUIRED) {
+          await AdsConsent.showForm();
+        }
+  
+        // Oznaczamy, że użytkownik już widział formularz
+        await AsyncStorage.setItem('hasSeenConsent', 'true');
+      }
+    } catch (error) {
+      console.error('Błąd sprawdzania zgody:', error);
+    }
+  };
 
   const checkLocalData = async () => {
     try {
@@ -136,7 +176,11 @@ const HomeScreen: React.FC = () => {
       <View style={styles.switches}>
         <View style={styles.switchContainer}>
           <Text style={styles.switchLabel}>Ulubione</Text>
-          <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} />
+          <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
+                  thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined} // iOS thumb
+                  ios_backgroundColor="#E5E5EA" // iOS background
+                  style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
+                  />
         </View>
 
         <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>

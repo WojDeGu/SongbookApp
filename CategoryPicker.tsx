@@ -11,7 +11,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
   const { theme } = useTheme(); // Pobieramy aktualny motyw
   const styles = theme === 'light' ? lightStyles : darkStyles;
 
-  const categories = ['Uwielbienie', 'Wielkanoc', 'Wielki Post', 'Adwent', 'Zwykłe', 'Msza'];
+  const categories = ['Uwielbienie', 'Wielkanoc', 'Wielki Post', 'Zwykłe', 'Msza', 'Maryjne'];
 
   return (
     <View style={styles.container}>
