@@ -23,3 +23,9 @@ Prosta aplikacja, która ma działać na iOS i android.
 - dodanie baneru z reklamą
 - funkcja wyszukiwarki
 - dodanie przycisku do pokazywania przycisków zmiany czcionki w ustawieniach
+
+**v1.3b ~15.02.2025**
+- dodanie polityki prywatności i polityki RODO
+- zmiany w wyglądzie przycisków i przełączników
+- zmiany w czytelności treści piosenek
+- ustawienie alfabetycznie piosenek
