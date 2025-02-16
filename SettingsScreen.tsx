@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, DeviceEventEmitter, Linking, Switch, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
+import Config from 'react-native-config';
 import { MobileAds, AdsConsent, AdsConsentDebugGeography, AdsConsentStatus  } from 'react-native-google-mobile-ads';
 
-const API_URL = 'https://songbook.slowkodaje.pl/api.php';
+const API_URL = Config.API_URL as string;
+const USER_AGENT = Config.USER_AGENT as string;
 const LOCAL_STORAGE_KEY = 'songbook.json';
 
 const SettingsScreen: React.FC = () => {
@@ -54,7 +56,7 @@ const SettingsScreen: React.FC = () => {
       const response = await fetch(API_URL, {
         method: 'GET',
         headers: {
-          'User-Agent': 'SongbookApp',
+          'User-Agent': USER_AGENT,
           'Content-Type': 'application/json'
         }
       });
