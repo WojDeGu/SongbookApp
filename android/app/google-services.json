@@ -22,6 +22,26 @@
         "appinvite_service": {
           "other_platform_oauth_client": []
         }
+      },
+      "admob_app_id": "ca-app-pub-3054958321666076~8110851931"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876172140306:android:b3bd2f3724d35510369dcb",
+        "android_client_info": {
+          "package_name": "com.spiewnikreligijnyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAy_YspwiAlJqRzQMvU54n6qx8Y3O5Pm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
       }
     }
   ],

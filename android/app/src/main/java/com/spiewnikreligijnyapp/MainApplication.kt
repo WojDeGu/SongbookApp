@@ -1,4 +1,4 @@
-package com.songbookapp
+package com.spiewnikreligijnyapp
 
 import android.app.Application
 import com.facebook.react.PackageList
