@@ -7,10 +7,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SongSearch from './SongSearch';
 import AdBanner from './AdBanner';
 import { Svg, Path } from 'react-native-svg';
-import {AdsConsent, AdsConsentDebugGeography, AdsConsentStatus } from 'react-native-google-mobile-ads';
+import env from "./env.js";
+import {AdsConsent, AdsConsentStatus } from 'react-native-google-mobile-ads';
 import { requestTrackingPermission } from 'react-native-tracking-transparency';
 
-const API_URL = 'https://songbook.slowkodaje.pl/api.php';
+const API_URL = env.API_URL;
 const LOCAL_STORAGE_KEY = 'songbook.json';
 
 const HomeScreen: React.FC = () => {
@@ -51,15 +52,12 @@ const HomeScreen: React.FC = () => {
       const hasSeenConsent = await AsyncStorage.getItem('hasSeenConsent');
   
       if (!hasSeenConsent) {
-        // Pobieramy status zgody
         const consentInfo = await AdsConsent.requestInfoUpdate();
         
-        // Jeśli zgoda jest wymagana, otwieramy formularz
         if (consentInfo.status === AdsConsentStatus.REQUIRED) {
           await AdsConsent.showForm();
         }
-  
-        // Oznaczamy, że użytkownik już widział formularz
+
         await AsyncStorage.setItem('hasSeenConsent', 'true');
       }
     } catch (error) {
@@ -87,7 +85,7 @@ const HomeScreen: React.FC = () => {
       const response = await fetch(API_URL, {
         method: 'GET',
         headers: {
-          'User-Agent': 'SongbookApp',
+          'User-Agent': env.USER_AGENT,
           'Content-Type': 'application/json'
         }
       });
@@ -176,10 +174,10 @@ const HomeScreen: React.FC = () => {
       <View style={styles.switches}>
         <View style={styles.switchContainer}>
           <Text style={styles.switchLabel}>Ulubione</Text>
-          <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
-                  thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined} // iOS thumb
-                  ios_backgroundColor="#E5E5EA" // iOS background
-                  style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
+          <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+                  thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
+                  ios_backgroundColor="#E5E5EA"
+                  style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
                   />
         </View>
 

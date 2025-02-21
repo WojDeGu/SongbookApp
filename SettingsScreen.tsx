@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, DeviceEventEmitter, Linking, Switch, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
-import Config from 'react-native-config';
-import { MobileAds, AdsConsent, AdsConsentDebugGeography, AdsConsentStatus  } from 'react-native-google-mobile-ads';
+import env from "./env.js";
+import { MobileAds, AdsConsent, AdsConsentStatus  } from 'react-native-google-mobile-ads';
 
-const API_URL = Config.API_URL as string;
-const USER_AGENT = Config.USER_AGENT as string;
+const API_URL = env.API_URL;
+const USER_AGENT = env.USER_AGENT;
 const LOCAL_STORAGE_KEY = 'songbook.json';
 
 const SettingsScreen: React.FC = () => {
@@ -31,7 +31,7 @@ const SettingsScreen: React.FC = () => {
         setShowFontSizeAdjuster(newValue);
         await AsyncStorage.setItem('showFontSizeAdjuster', JSON.stringify(newValue));
 
-        DeviceEventEmitter.emit('updateFontSizeAdjuster', newValue); // Wysyłamy event
+        DeviceEventEmitter.emit('updateFontSizeAdjuster', newValue);
       };
 
   const checkLocalData = async () => {
@@ -57,7 +57,8 @@ const SettingsScreen: React.FC = () => {
         method: 'GET',
         headers: {
           'User-Agent': USER_AGENT,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
         }
       });
 
@@ -82,10 +83,8 @@ const SettingsScreen: React.FC = () => {
     try {
       await MobileAds().initialize();
   
-      // Pobierz aktualny status zgody
       const consentInfo = await AdsConsent.requestInfoUpdate();
   
-      // Jeśli zgoda została już wyrażona, nadal pozwól użytkownikowi otworzyć formularz
       if (consentInfo.status === AdsConsentStatus.REQUIRED || consentInfo.status === AdsConsentStatus.OBTAINED) {
         await AdsConsent.showForm();
       } else {

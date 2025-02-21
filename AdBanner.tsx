@@ -2,10 +2,10 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { View, StyleSheet } from 'react-native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import Config from 'react-native-config';
+import env from "./env.js";
 
-const IOS_ADUNITID = Config.IOS_ADUNITID as string;
-const ANDROID_ADUNITID = Config.ANDROID_ADUNITID as string;
+const IOS_ADUNITID = env.IOS_ADUNITID;
+const ANDROID_ADUNITID = env.ANDROID_ADUNITID;
 
 const adUnitId = Platform.select({
     ios: IOS_ADUNITID,
@@ -16,7 +16,7 @@ const AdBanner: React.FC = () => {
   return (
     <View style={styles.container}>
       <BannerAd 
-        unitId={adUnitId}
+        unitId={TestIds.BANNER} //{adUnitId}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         requestOptions={{ requestNonPersonalizedAdsOnly: true }}
       />
