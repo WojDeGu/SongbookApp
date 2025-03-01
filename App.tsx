@@ -8,7 +8,9 @@ import ChangelogModal, { useChangelogModal } from './Changelog';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { TouchableOpacity } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
-
+import { useEffect } from 'react';
+import { Dimensions } from 'react-native';
+import Orientation from 'react-native-orientation-locker';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -65,6 +67,9 @@ const AppNavigator: React.FC = () => {
 
 const App: React.FC = () => {
   const { isVisible, hideModal } = useChangelogModal();
+  useEffect(() => {
+    Orientation.lockToPortrait();
+  }, []);
   return (
     <ThemeProvider>
       <NavigationContainer>

@@ -15,7 +15,7 @@ const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: (
           <Text style={styles.title}>Nowości w wersji {APP_VERSION}</Text>
           <Text style={styles.changelogText}>
             - Poprawiono wydajność aplikacji{'\n'}
-            - Dodano Changelog{'\n'}
+            - Zablokowano obracanie ekranu{'\n'}
             - Dodano nowe piosenki
           </Text>
           <TouchableOpacity style={styles.button} onPress={onClose}>

@@ -136,11 +136,11 @@ const SettingsScreen: React.FC = () => {
 
         <View style={styles.bottomButtonsContainer}>
             <TouchableOpacity style={styles.buttonPrivacy} onPress={showModal}>
-              <Text style={styles.buttonText}>Pokaż Changelog</Text>
+              <Text style={styles.buttonText}>Pokaż najnowsze zmiany</Text>
             </TouchableOpacity>
 
             <ChangelogModal isVisible={isVisible} onClose={hideModal} />
-            
+
             <TouchableOpacity style={styles.buttonPrivacy} onPress={openPrivacyPolicy}>
             <Text style={styles.buttonText}>Polityka Prywatności</Text>
             </TouchableOpacity>
