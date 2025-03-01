@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, DeviceEventEmitter, Linking, Switch, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
+import ChangelogModal, { useChangelogModal } from './Changelog';
 import env from "./env.js";
 import { MobileAds, AdsConsent, AdsConsentStatus  } from 'react-native-google-mobile-ads';
 
@@ -14,6 +15,7 @@ const SettingsScreen: React.FC = () => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [songCount, setSongCount] = useState<number | null>(null);
   const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
+  const { isVisible, showModal, hideModal } = useChangelogModal();
 
   useEffect(() => {
       checkLocalData();
@@ -133,6 +135,12 @@ const SettingsScreen: React.FC = () => {
         </View>
 
         <View style={styles.bottomButtonsContainer}>
+            <TouchableOpacity style={styles.buttonPrivacy} onPress={showModal}>
+              <Text style={styles.buttonText}>Pokaż Changelog</Text>
+            </TouchableOpacity>
+
+            <ChangelogModal isVisible={isVisible} onClose={hideModal} />
+            
             <TouchableOpacity style={styles.buttonPrivacy} onPress={openPrivacyPolicy}>
             <Text style={styles.buttonText}>Polityka Prywatności</Text>
             </TouchableOpacity>

@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Śpiewnik + Religijny</string>
 	<key>CFBundleExecutable</key>
-	<string>spiewnikreligijnyapp</string>
+	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>

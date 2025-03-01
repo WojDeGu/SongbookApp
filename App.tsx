@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './HomeScreen';
 import SongDetail from './SongDetail';
 import SettingsScreen from './SettingsScreen';
+import ChangelogModal, { useChangelogModal } from './Changelog';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { TouchableOpacity } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
@@ -34,6 +35,7 @@ const SettingsIcon = ({ color = "#000", secondcolor = "#000", size = 28 }) => (
 const AppNavigator: React.FC = () => {
   const { theme } = useTheme();
   const iconColor = theme === 'light' ? '#121212' : '#ffffff';
+  
 
   return (
     <Stack.Navigator
@@ -54,7 +56,6 @@ const AppNavigator: React.FC = () => {
       ) : null,
   })}
 >
-
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Strona główna' }} />
       <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Ustawienia' }} />
       <Stack.Screen name="SongDetail" component={SongDetail} options={{ title: 'Piosenka' }} />
@@ -63,10 +64,12 @@ const AppNavigator: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const { isVisible, hideModal } = useChangelogModal();
   return (
     <ThemeProvider>
       <NavigationContainer>
         <AppNavigator />
+        <ChangelogModal isVisible={isVisible} onClose={hideModal} />
       </NavigationContainer>
     </ThemeProvider>
   );
