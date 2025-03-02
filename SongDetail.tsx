@@ -11,10 +11,12 @@ const minorChords = ['c', 'cis', 'd', 'dis', 'e', 'f', 'fis', 'g', 'gis', 'a', '
 
 // Funkcja do transpozycji akordów w całym tekście
 const transposeChord = (line: string, steps: number): string => {
+  // const limitedSteps = Math.max(-11, Math.min(steps, 11)); Ograniczenie zmiany liczby transpozycji w funkcji
+
   return line.replace(/\b(Cis|Dis|Fis|Gis|cis|dis|fis|gis|[A-Ha-h])([#b]?m?\d*\+?\-?\w*)?\b/g, (match, root, suffix = '') => {
     const isMajor = majorChords.includes(root);
     const isMinor = minorChords.includes(root);
-    if (!isMajor && !isMinor) return match; // Jeśli to nie akord, pozostaje bez zmian
+    if (!isMajor && !isMinor) return match;
 
     const chordsList = isMajor ? majorChords : minorChords;
     const index = chordsList.indexOf(root);
@@ -87,11 +89,15 @@ const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; set
   const styles = theme === 'light' ? lightStyles : darkStyles;
   return (
     <View style={styles.controlsContainer}>
-      <TouchableOpacity onPress={() => setTranspose(transpose - 1)} style={styles.controlButton}>
+      <TouchableOpacity onPress={() => setTranspose(Math.max(-11, transpose - 1))}
+        style={[styles.controlButton, transpose <= -11 && styles.disabledButton]}
+        disabled={transpose <= -11}>
         <Text style={styles.controlButtonText}>-</Text>
       </TouchableOpacity>
       <Text style={styles.transposeText}>Tonacja: {transpose > 0 ? `+${transpose}` : transpose}</Text>
-      <TouchableOpacity onPress={() => setTranspose(transpose + 1)} style={styles.controlButton}>
+      <TouchableOpacity onPress={() => setTranspose(Math.min(11, transpose + 1))}
+        style={[styles.controlButton, transpose >= 11 && styles.disabledButton]}
+        disabled={transpose >= 11}>
         <Text style={styles.controlButtonText}>+</Text>
       </TouchableOpacity>
     </View>
@@ -240,6 +246,9 @@ const lightStyles = StyleSheet.create({
     marginHorizontal: 5,
     backgroundColor: '#007AFF',
     borderRadius: 5,
+  },
+  disabledButton: {
+    backgroundColor: '#aaa', // Szary kolor dla wyłączonych przycisków
   },
   controlButtonText: {
     color: 'white',

@@ -8,8 +8,8 @@ import ChangelogModal, { useChangelogModal } from './Changelog';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { TouchableOpacity } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
+import SongListChecker from './SongListChecker';
 import { useEffect } from 'react';
-import { Dimensions } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 
 export type RootStackParamList = {
@@ -72,6 +72,7 @@ const App: React.FC = () => {
   }, []);
   return (
     <ThemeProvider>
+      <SongListChecker />
       <NavigationContainer>
         <AppNavigator />
         <ChangelogModal isVisible={isVisible} onClose={hideModal} />

@@ -12,11 +12,12 @@ const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: (
     <Modal visible={isVisible} transparent animationType="slide">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.title}>Nowości w wersji {APP_VERSION}</Text>
+          <Text style={styles.title}>Najnowsze zmiany</Text>
           <Text style={styles.changelogText}>
             - Poprawiono wydajność aplikacji{'\n'}
-            - Zablokowano obracanie ekranu{'\n'}
-            - Dodano nowe piosenki
+            - Ograniczono możliwość zmiany tonacji utworów do zakresu -11 do +11{'\n'}
+            - Dodano komunikat informujący o zaktualizowanej liście piosenek {'\n'}
+            - Dodano nowe piosenki - Zaktualizuj listę
           </Text>
           <TouchableOpacity style={styles.button} onPress={onClose}>
             <Text style={styles.buttonText}>Zamknij</Text>
