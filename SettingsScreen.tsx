@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, DeviceEventEmitter, Linking, Switch, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
 import ChangelogModal, { useChangelogModal } from './Changelog';
 import env from "./env.js";
+import { useNavigation } from '@react-navigation/native';
 import { MobileAds, AdsConsent, AdsConsentStatus  } from 'react-native-google-mobile-ads';
 
 const API_URL = env.API_URL;
@@ -16,6 +17,7 @@ const SettingsScreen: React.FC = () => {
   const [songCount, setSongCount] = useState<number | null>(null);
   const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
   const { isVisible, showModal, hideModal } = useChangelogModal();
+  const navigation = useNavigation();
 
   useEffect(() => {
       checkLocalData();
@@ -28,14 +30,16 @@ const SettingsScreen: React.FC = () => {
       loadSettings();
     }, []);
 
-    const toggleFontSizeAdjuster = async () => {
-        const newValue = !showFontSizeAdjuster;
-        setShowFontSizeAdjuster(newValue);
-        await AsyncStorage.setItem('showFontSizeAdjuster', JSON.stringify(newValue));
+    // Komponent do pokazywania/ukrywania przycisków zmiany czcionki
+  const toggleFontSizeAdjuster = async () => {
+    const newValue = !showFontSizeAdjuster;
+    setShowFontSizeAdjuster(newValue);
+    await AsyncStorage.setItem('showFontSizeAdjuster', JSON.stringify(newValue));
 
-        DeviceEventEmitter.emit('updateFontSizeAdjuster', newValue);
-      };
+    DeviceEventEmitter.emit('updateFontSizeAdjuster', newValue);
+  };
 
+  // Komponent do sprawdzania bazy piosenek
   const checkLocalData = async () => {
     try {
       const storedData = await AsyncStorage.getItem(LOCAL_STORAGE_KEY);
@@ -50,6 +54,7 @@ const SettingsScreen: React.FC = () => {
     }
   };
 
+  // Komponent do pobierania bazy piosenek
   const fetchSongsFromAPI = async () => {
     if (isFetching) return;
     setIsFetching(true);
@@ -81,6 +86,7 @@ const SettingsScreen: React.FC = () => {
     }
   };
 
+  // Komponent do określenia prywatności w AdMob
   const showPrivacyMessaging = async () => {
     try {
       await MobileAds().initialize();
@@ -98,8 +104,7 @@ const SettingsScreen: React.FC = () => {
     }
   };
   
-    
-
+  // Komponent przenoszący na stronę z polityką prywatności
   const openPrivacyPolicy = () => {
     Linking.openURL('http://politykaprywatnosci.slowkodaje.pl').catch(err => 
       console.error("Nie można otworzyć linku:", err)
@@ -110,9 +115,8 @@ const SettingsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-        
       {songCount !== null && <Text style={styles.songCount}>Liczba piosenek: {songCount}</Text>}
-      <TouchableOpacity style={styles.buttonPrivacy} onPress={fetchSongsFromAPI} disabled={isFetching}>
+      <TouchableOpacity style={styles.buttonPink} onPress={fetchSongsFromAPI} disabled={isFetching}>
         <Text style={styles.buttonText}>{isFetching ? 'Pobieranie...' : 'Zaktualizuj listę piosenek'}</Text>
       </TouchableOpacity>
 
@@ -125,30 +129,29 @@ const SettingsScreen: React.FC = () => {
         />
       </View>
 
-        <View style={styles.switchContainer}>
-            <Text style={styles.switchLabel}>Pokaż regulator czcionki</Text>
-            <Switch value={showFontSizeAdjuster} onValueChange={toggleFontSizeAdjuster} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
-            thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined} // iOS thumb
-            ios_backgroundColor="#E5E5EA" // iOS background
-            style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
-            />
-        </View>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Pokaż regulator czcionki</Text>
+        <Switch value={showFontSizeAdjuster} onValueChange={toggleFontSizeAdjuster} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
+          thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined} // iOS thumb
+          ios_backgroundColor="#E5E5EA" // iOS background
+          style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
+        />
+      </View>
 
-        <View style={styles.bottomButtonsContainer}>
-            <TouchableOpacity style={styles.buttonPrivacy} onPress={showModal}>
-              <Text style={styles.buttonText}>Pokaż najnowsze zmiany</Text>
-            </TouchableOpacity>
-
-            <ChangelogModal isVisible={isVisible} onClose={hideModal} />
-
-            <TouchableOpacity style={styles.buttonPrivacy} onPress={openPrivacyPolicy}>
-            <Text style={styles.buttonText}>Polityka Prywatności</Text>
-            </TouchableOpacity>
-            {Platform.OS === 'android' && (
-            <TouchableOpacity style={styles.buttonPrivacy} onPress={showPrivacyMessaging}>
+      <View style={styles.bottomButtonsContainer}>
+        <TouchableOpacity style={styles.buttonBlue} onPress={showModal}>
+          <Text style={styles.buttonText}>Pokaż najnowsze zmiany</Text>
+        </TouchableOpacity>
+        <ChangelogModal isVisible={isVisible} onClose={hideModal} />
+        <TouchableOpacity style={styles.buttonBlue} onPress={openPrivacyPolicy}>
+        <Text style={styles.buttonText}>Polityka Prywatności</Text>
+        </TouchableOpacity>
+        {Platform.OS === 'android' && (
+          <TouchableOpacity style={styles.buttonBlue} onPress={showPrivacyMessaging}>
             <Text style={styles.buttonText}>Ustawienia prywatności</Text>
-            </TouchableOpacity>)}
-        </View>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
@@ -159,6 +162,13 @@ const lightStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     backgroundColor: '#fff',
+  },
+  songCount: {
+    marginTop: 20,
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#000000',
   },
   title: {
     fontSize: 24,
@@ -174,7 +184,7 @@ const lightStyles = StyleSheet.create({
     fontSize: 18,
     marginRight: 10,
   },
-  buttonPrivacy:{
+  buttonBlue:{
     backgroundColor: '#007bff',
     paddingVertical: 12,
     paddingHorizontal: 20,
@@ -187,12 +197,13 @@ const lightStyles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  button: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 5,
+  buttonPink:{
+    backgroundColor: '#DE6FA1',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
     alignItems: 'center',
-    marginVertical: 15,
+    marginVertical: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -203,13 +214,6 @@ const lightStyles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  songCount: {
-    marginTop: 10,
-    fontSize: 24,
-    textAlign: 'center',
-    marginBottom: 10,
-    color: '#000000',
   },
   bottomButtonsContainer: {
     flexDirection: 'column',
@@ -235,13 +239,13 @@ const darkStyles = StyleSheet.create({
     ...lightStyles.switchLabel,
     color: '#ffffff',
   },
-  buttonPrivacy:{
-    ...lightStyles.buttonPrivacy,
+  buttonBlue:{
+    ...lightStyles.buttonBlue,
     backgroundColor: '#1E40AF',
   },
-  button: {
-    ...lightStyles.button,
-    backgroundColor: '#1E40AF',
+  buttonPink:{
+    ...lightStyles.buttonPink,
+    backgroundColor: '#DE5285',
   },
   songCount:{
     ...lightStyles.songCount,

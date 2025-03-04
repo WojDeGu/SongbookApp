@@ -3,20 +3,19 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
 
-const APP_VERSION = "1.0.0"; // Zmień na aktualną wersję aplikacji
+const APP_VERSION = "1.0.0";
 
 const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: () => void }) => {
   const { theme } = useTheme();
-    const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles : darkStyles;
   return (
-    <Modal visible={isVisible} transparent animationType="slide">
+    <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Najnowsze zmiany</Text>
           <Text style={styles.changelogText}>
             - Poprawiono wydajność aplikacji{'\n'}
-            - Ograniczono możliwość zmiany tonacji utworów do zakresu -11 do +11{'\n'}
-            - Dodano komunikat informujący o zaktualizowanej liście piosenek {'\n'}
+            - Zmiany wizualne{'\n'}
             - Dodano nowe piosenki - Zaktualizuj listę
           </Text>
           <TouchableOpacity style={styles.button} onPress={onClose}>

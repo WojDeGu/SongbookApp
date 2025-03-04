@@ -6,6 +6,22 @@ import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+type RootStackParamList = {
+  HomeScreen: undefined;
+  SongDetail: { songId: number };
+};
+
+interface Song {
+  id: number;
+  name: string;
+  category: string;
+  content: { lyrics: string; chords?: string }[];
+}
+
+interface SongDetailProps {
+  route: RouteProp<RootStackParamList, 'SongDetail'>;
+}
+
 const majorChords = ['C', 'Cis', 'D', 'Dis', 'E', 'F', 'Fis', 'G', 'Gis', 'A', 'B', 'H'];
 const minorChords = ['c', 'cis', 'd', 'dis', 'e', 'f', 'fis', 'g', 'gis', 'a', 'b', 'h'];
 
@@ -26,23 +42,6 @@ const transposeChord = (line: string, steps: number): string => {
   });
 };
 
-// Typowanie parametrów nawigacji
-type RootStackParamList = {
-  HomeScreen: undefined;
-  SongDetail: { songId: number };
-};
-
-interface Song {
-  id: number;
-  name: string;
-  category: string;
-  content: { lyrics: string; chords?: string }[];
-}
-
-interface SongDetailProps {
-  route: RouteProp<RootStackParamList, 'SongDetail'>;
-}
-
 // Komponent do zmiany wielkości czcionki
 const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFontSize: (size: number) => void }) => {
   const { theme } = useTheme();
@@ -58,7 +57,6 @@ const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFont
           <Text style={styles.controlButtonText}>A+</Text>
         </TouchableOpacity>
       </View>
-
   );
 };
 
@@ -81,7 +79,6 @@ const usePinchToZoom = (fontSize: number, setFontSize: (size: number) => void) =
       handlePinch(event.scale);
     });
 };
-
 
 // Komponent do zmiany tonacji
 const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; setTranspose: (steps: number) => void }) => {
@@ -130,7 +127,6 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
         chorusStartIndex = index;
       }
   
-      // Gdy pojawia się numerowana zwrotka, kończymy refren
       if (isChorus && isVerseStart) {
         isChorus = false;
       }
@@ -154,7 +150,6 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
       );
     });
   };
-    
 
   useEffect(() => {
     const fetchSongDetail = async () => {
@@ -190,10 +185,8 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
       setShowFontSizeAdjuster(value);
     });
     return () => {
-      subscription.remove(); // Usuwamy nasłuch, gdy komponent zostanie odmontowany
+      subscription.remove();
     };
-
-    
   }, [songId]);
 
   if (isLoading) {
@@ -224,7 +217,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
       }
       data={songDetail?.content || []}
       keyExtractor={(item, index) => index.toString()}
-      renderItem={null} // Nie używamy domyślnego `renderItem`
+      renderItem={null}
       ListFooterComponent={<View>{renderSongContent(songDetail?.content || [])}</View>}
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
@@ -232,7 +225,6 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
     </GestureDetector>
   );
 };
-
 
 const lightStyles = StyleSheet.create({
   controlsContainer: {
@@ -242,17 +234,18 @@ const lightStyles = StyleSheet.create({
     marginVertical: 10,
   },
   controlButton: {
-    padding: 10,
+    padding: 5,
+    paddingHorizontal: 15,
     marginHorizontal: 5,
     backgroundColor: '#007AFF',
     borderRadius: 5,
   },
   disabledButton: {
-    backgroundColor: '#aaa', // Szary kolor dla wyłączonych przycisków
+    backgroundColor: '#aaa',
   },
   controlButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   transposeControlsContainer: {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useTheme } from './ThemeContext'; // Pobranie motywu z kontekstu
+import { useTheme } from './ThemeContext';
 
 interface CategoryPickerProps {
   selectedCategory: string | null;
@@ -8,7 +8,7 @@ interface CategoryPickerProps {
 }
 
 const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSelectCategory }) => {
-  const { theme } = useTheme(); // Pobieramy aktualny motyw
+  const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
 
   const categories = ['Uwielbienie', 'Wielkanoc', 'Wielki Post', 'Zwykłe', 'Msza', 'Maryjne'];
@@ -63,7 +63,7 @@ const lightStyles = StyleSheet.create({
     borderRadius: 20,
   },
   selectedItem: {
-    borderWidth: 2,
+    //borderWidth: 2,
     backgroundColor: '#007BFF',
     borderColor: '#0056b3',
   },
@@ -72,7 +72,7 @@ const lightStyles = StyleSheet.create({
     color: '#333333',
   },
   selectedItemText: {
-    fontWeight: 'bold',
+    //fontWeight: '600',
     color: '#ffffff',
   },
 });
