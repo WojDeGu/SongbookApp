@@ -121,6 +121,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
     return content.map((item, index) => {
       const isChorusStart = /^Ref[\.:]/i.test(item.lyrics.trim());
       const isVerseStart = /^\d+\./.test(item.lyrics.trim());
+      const isAuthor = /^\/\/(.+?)\/\/$/.test(item.lyrics.trim());
   
       if (isChorusStart) {
         isChorus = true;
@@ -140,7 +141,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
             isVerseStart && !isChorusStart ? { marginTop: 15 } : {} // Odstęp po refrenie przed zwrotką
           ]}
         >
-          <Text style={[styles.songLyrics, { fontSize }, isChorus && { fontWeight: "bold" }]}>
+          <Text style={[styles.songLyrics, { fontSize }, isChorus && { fontWeight: "bold" }, isAuthor && { fontStyle: "italic", fontWeight: "300", marginTop: 20 }]}>
             {item.lyrics || ''}
           </Text>
           <Text style={[styles.songChords, { fontSize }, isChorus && { fontWeight: "bold" }]}>
@@ -205,6 +206,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   return (
     <GestureDetector gesture={pinchGesture}>
     <FlatList
+      style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff' }}
       ListHeaderComponent={
         <>
           <View style={styles.header}>

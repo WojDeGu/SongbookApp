@@ -16,7 +16,7 @@ const AdBanner: React.FC = () => {
   return (
     <View style={styles.container}>
       <BannerAd 
-        unitId={TestIds.BANNER} //{adUnitId}
+        unitId={adUnitId} //{TestIds.BANNER} 
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         requestOptions={{ requestNonPersonalizedAdsOnly: true }}
       />
