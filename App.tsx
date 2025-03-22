@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './HomeScreen';
 import SongDetail from './SongDetail';
 import SettingsScreen from './SettingsScreen';
-import ChangelogModal, { useChangelogModal } from './Changelog';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { TouchableOpacity } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
@@ -51,7 +50,7 @@ const AppNavigator: React.FC = () => {
     },
     headerTitleAlign: 'center',
     headerRight: () =>
-      route.name !== 'SettingsScreen' ? ( // Ukrywa headerRight na SettingsScreen
+      route.name !== 'SettingsScreen' ? ( // Ukrywa headerRight na SettingsScreen <ChangelogModal isVisible={isVisible} onClose={hideModal} />
         <TouchableOpacity style={{ marginRight: 15 }}onPress={() => navigation.navigate('SettingsScreen')}>
           <SettingsIcon size={28} color={theme === 'light' ? '#304052' : 'white'} secondcolor={theme === 'dark' ? '#304052' : 'white'}/>
         </TouchableOpacity>
@@ -66,7 +65,6 @@ const AppNavigator: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const { isVisible, hideModal } = useChangelogModal();
   useEffect(() => {
     Orientation.lockToPortrait();
   }, []);
@@ -75,7 +73,6 @@ const App: React.FC = () => {
       <SongListChecker />
       <NavigationContainer>
         <AppNavigator />
-        <ChangelogModal isVisible={isVisible} onClose={hideModal} />
       </NavigationContainer>
     </ThemeProvider>
   );

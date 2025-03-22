@@ -6,7 +6,7 @@ import { RootStackParamList } from './App';
 import { useTheme } from './ThemeContext';
 import FavoriteButton from './FavoriteButton';
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importujemy AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Song {
   id: number;

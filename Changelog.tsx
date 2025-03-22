@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
-
-const APP_VERSION = "1.0.0";
 
 const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: () => void }) => {
   const { theme } = useTheme();
@@ -14,9 +11,10 @@ const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: (
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Najnowsze zmiany</Text>
           <Text style={styles.changelogText}>
-            - Poprawiono wydajność aplikacji{'\n'}
-            - Zmiany wizualne{'\n'}
-            - Dodano nowe piosenki - Zaktualizuj listę
+            - Optymalizacja aplikacji{'\n'}
+            - Aktualizacja kategorii{'\n'}
+            - Dodanie baneru z reklamą{'\n'}
+            - Dodano nowe piosenki - Zaktualizuj listę w ustawieniach
           </Text>
           <TouchableOpacity style={styles.button} onPress={onClose}>
             <Text style={styles.buttonText}>Zamknij</Text>
@@ -29,17 +27,6 @@ const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: (
 
 export const useChangelogModal = () => {
   const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const checkIfShouldShowModal = async () => {
-      const lastVersion = await AsyncStorage.getItem('app_version');
-      if (lastVersion !== APP_VERSION) {
-        setIsVisible(true);
-        await AsyncStorage.setItem('app_version', APP_VERSION);
-      }
-    };
-    checkIfShouldShowModal();
-  }, []);
 
   const showModal = () => setIsVisible(true);
   const hideModal = () => setIsVisible(false);

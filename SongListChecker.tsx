@@ -15,6 +15,10 @@ const SongListChecker: React.FC = () => {
         const storedData = await AsyncStorage.getItem(LOCAL_STORAGE_KEY);
         const localSongs = storedData ? JSON.parse(storedData) : [];
 
+        if(localSongs.length === 0){
+          return;
+        }
+
         const response = await fetch(API_URL, {
           method: 'GET',
           headers: {
@@ -33,7 +37,7 @@ const SongListChecker: React.FC = () => {
         if (localSongs.length !== fetchedSongs.length) {
           Alert.alert(
             'Aktualizacja dostępna',
-            'Pobierz aktualną listę piosenek. Opcję znajdziesz w ustawieniach.'
+            'Pobierz aktualną listę piosenek. Opcję znajdziesz w ustawieniach. Ustawienia (prawy górny róg) -> "Zaktualizuj listę piosenek"'
           );
         }
       } catch (error) {
