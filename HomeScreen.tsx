@@ -167,9 +167,9 @@ const HomeScreen: React.FC = () => {
   const styles = theme === 'light' ? lightStyles : darkStyles;
   
   return (
-    // <AdBanner />
+    // <AdBanner /> - pamiętaj dodawać to
     <View style={styles.container}>
-      
+
       <Text style={styles.title}>Wybierz kategorię</Text>
       <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={handleCategoryChange} />
       <View style={styles.switches}>
