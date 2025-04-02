@@ -77,3 +77,4 @@ yarn-error.log
 .env
 android/keystore.properties
 env.js
+todo.txt
