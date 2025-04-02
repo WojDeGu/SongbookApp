@@ -72,7 +72,7 @@ const lightStyles = StyleSheet.create({
     color: '#333333',
   },
   selectedItemText: {
-    //fontWeight: '600',
+    fontWeight: '700',
     color: '#ffffff',
   },
 });

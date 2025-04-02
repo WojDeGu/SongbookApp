@@ -11,7 +11,8 @@ const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: (
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Najnowsze zmiany</Text>
           <Text style={styles.changelogText}>
-            - Drobne poprawki{'\n'}
+            - Zmiany wizualne{'\n'}
+            - Przebudowana karta 'Piosenka'{'\n'}
             - Dodano nowe piosenki - Zaktualizuj listę w ustawieniach
           </Text>
           <TouchableOpacity style={styles.button} onPress={onClose}>

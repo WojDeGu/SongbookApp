@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, DeviceEventEmitter } from 'react-native';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { runOnJS } from 'react-native-reanimated';
+import { GestureDetector, Gesture, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { runOnJS, useSharedValue, useDerivedValue } from 'react-native-reanimated';
 import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -62,18 +62,18 @@ const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFont
 
 // Komponent do obsługi gestami
 const usePinchToZoom = (fontSize: number, setFontSize: (size: number) => void) => {
-  const [baseFontSize, setBaseFontSize] = useState(fontSize);
+  const baseFontSize = useSharedValue(fontSize);
 
   const handlePinch = (scale: number) => {
     'worklet';
-    const newSize = Math.max(10, Math.min(baseFontSize * scale, 50));
-    runOnJS(setFontSize)(newSize);
+    baseFontSize.value = Math.max(10, Math.min(fontSize * scale, 50));
+    runOnJS(setFontSize)(baseFontSize.value);
   };
 
   return Gesture.Pinch()
     .onBegin(() => {
       'worklet';
-      runOnJS(setBaseFontSize)(fontSize);
+      baseFontSize.value = fontSize;
     })
     .onUpdate((event) => {
       handlePinch(event.scale);
@@ -205,25 +205,26 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   
   return (
     <GestureDetector gesture={pinchGesture}>
-    <>
-      <View collapsable={false}  style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff' }}>
-      <View style={styles.header}>
-        <Text style={styles.songName}>{songDetail?.name}</Text>
+      <View style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff', flex: 1}}>
+        <View>
+          <View style={styles.header}>
+            <Text style={styles.songName}>{songDetail?.name}</Text>
+          </View>
+          <Text style={styles.songCategory}>{songDetail?.category}</Text>
+          {showFontSizeAdjuster && <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} /> }
+          <TransposeAdjuster transpose={transpose} setTranspose={setTranspose} />
+        </View>
+
+        <FlatList
+          style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff', flex: 1 }}
+          data={songDetail?.content || []}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={() => null}
+          ListFooterComponent={<View>{renderSongContent(songDetail?.content || [])}</View>}
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        />
       </View>
-      <Text style={styles.songCategory}>{songDetail?.category}</Text>
-      {showFontSizeAdjuster && <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} /> }
-      <TransposeAdjuster transpose={transpose} setTranspose={setTranspose} />
-      </View>
-    <FlatList
-      style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff' }}
-      data={songDetail?.content || []}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={null}
-      ListFooterComponent={<View>{renderSongContent(songDetail?.content || [])}</View>}
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    />
-    </> 
     </GestureDetector>
   );
 };
@@ -264,6 +265,7 @@ const lightStyles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
+    marginTop: -15,
     padding: 20,
     backgroundColor: '#ffffff',
   },
@@ -272,6 +274,8 @@ const lightStyles = StyleSheet.create({
     backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 5,
+    marginHorizontal: 20,
+    marginTop: 15,
   },
   songName: {
     fontSize: 24,
