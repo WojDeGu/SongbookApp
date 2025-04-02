@@ -1,0 +1,4 @@
+-- Pomysły na usprawnienie aplikacji --
+[]  Autoscroll  - przycisk "AutoScroll" byłby w SongDetail; widoczność przycisku byłaby domyślnie wyłączona; zmieniać stan widoczności jak i prękości mozna w ustawieniach aplikacji; wartość prędkości byłby zmieniany suwakiem w zakresie 0.1 - 1
+[]  
+[]

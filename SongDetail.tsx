@@ -205,18 +205,17 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   
   return (
     <GestureDetector gesture={pinchGesture}>
+    <>
+      <View collapsable={false}  style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff' }}>
+      <View style={styles.header}>
+        <Text style={styles.songName}>{songDetail?.name}</Text>
+      </View>
+      <Text style={styles.songCategory}>{songDetail?.category}</Text>
+      {showFontSizeAdjuster && <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} /> }
+      <TransposeAdjuster transpose={transpose} setTranspose={setTranspose} />
+      </View>
     <FlatList
       style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff' }}
-      ListHeaderComponent={
-        <>
-          <View style={styles.header}>
-            <Text style={styles.songName}>{songDetail?.name}</Text>
-          </View>
-          <Text style={styles.songCategory}>{songDetail?.category}</Text>
-          {showFontSizeAdjuster && <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} /> }
-          <TransposeAdjuster transpose={transpose} setTranspose={setTranspose} />
-        </>
-      }
       data={songDetail?.content || []}
       keyExtractor={(item, index) => index.toString()}
       renderItem={null}
@@ -224,6 +223,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     />
+    </> 
     </GestureDetector>
   );
 };
