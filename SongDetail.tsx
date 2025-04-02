@@ -264,7 +264,6 @@ const lightStyles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    marginTop: -15,
     padding: 20,
     backgroundColor: '#ffffff',
   },

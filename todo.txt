@@ -2,4 +2,4 @@
 []  Autoscroll  - przycisk "AutoScroll" byłby w SongDetail; widoczność przycisku byłaby domyślnie wyłączona; zmieniać stan widoczności jak i prękości mozna w ustawieniach aplikacji; wartość prędkości byłby zmieniany suwakiem w zakresie 0.1 - 1
 [x]  Poprawić SongDetail, zeby tylko treść mozna było przesuwać
 []  Przypinalny refren // chyba nierealne, ale taka była propozycja
-[]  
+[]  Responzywność dla tabletów
