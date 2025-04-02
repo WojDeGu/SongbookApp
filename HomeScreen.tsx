@@ -34,7 +34,6 @@ const HomeScreen: React.FC = () => {
       }
     }
   };
-  
 
   useEffect(() => {
     loadFavoritesOnly();
@@ -46,18 +45,16 @@ const HomeScreen: React.FC = () => {
       checkPrivacyConsent();
     }
   }, []);
-
+  // funkcja sprawdzania, czy formularz prywatności został wcześniej wykonany
   const checkPrivacyConsent = async () => {
     try {
       const hasSeenConsent = await AsyncStorage.getItem('hasSeenConsent');
   
       if (!hasSeenConsent) {
         const consentInfo = await AdsConsent.requestInfoUpdate();
-        
         if (consentInfo.status === AdsConsentStatus.REQUIRED) {
           await AdsConsent.showForm();
         }
-
         await AsyncStorage.setItem('hasSeenConsent', 'true');
       }
     } catch (error) {
@@ -118,7 +115,6 @@ const HomeScreen: React.FC = () => {
       console.error('Błąd odświeżania piosenek:', error);
     }
   };
-  
 
   const updateFavorites = (favoriteIds: number[]) => {
     setFavoriteSongIds(favoriteIds);

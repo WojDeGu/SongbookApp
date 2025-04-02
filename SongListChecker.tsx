@@ -50,7 +50,7 @@ const SongListChecker: React.FC = () => {
     checkForUpdates();
   }, []);
 
-  return null; // Komponent nie renderuje nic na ekranie
+  return null;
 };
 
 export default SongListChecker;

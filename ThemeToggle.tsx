@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-import { useTheme } from './ThemeContext'; // Importujemy useTheme
+import { useTheme } from './ThemeContext';
 
 const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = useTheme(); // Dostęp do aktualnego trybu i funkcji do zmiany
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <View style={{ padding: 20 }}>

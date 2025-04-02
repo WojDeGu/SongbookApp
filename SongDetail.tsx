@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, DeviceEventEmitter } from 'react-native';
-import { GestureDetector, Gesture, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { runOnJS, useSharedValue, useDerivedValue } from 'react-native-reanimated';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { runOnJS, useSharedValue } from 'react-native-reanimated';
 import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,7 +21,7 @@ interface Song {
 interface SongDetailProps {
   route: RouteProp<RootStackParamList, 'SongDetail'>;
 }
-
+// Listy akordów
 const majorChords = ['C', 'Cis', 'D', 'Dis', 'E', 'F', 'Fis', 'G', 'Gis', 'A', 'B', 'H'];
 const minorChords = ['c', 'cis', 'd', 'dis', 'e', 'f', 'fis', 'g', 'gis', 'a', 'b', 'h'];
 
@@ -42,12 +42,11 @@ const transposeChord = (line: string, steps: number): string => {
   });
 };
 
-// Komponent do zmiany wielkości czcionki
+// Funkcja zmiany wielkości czcionki
 const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFontSize: (size: number) => void }) => {
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
   return (
-    
       <View style={styles.controlsContainer}>
         <TouchableOpacity onPress={() => setFontSize(fontSize - 2)} style={styles.controlButton}>
           <Text style={styles.controlButtonText}>A-</Text>
@@ -80,7 +79,7 @@ const usePinchToZoom = (fontSize: number, setFontSize: (size: number) => void) =
     });
 };
 
-// Komponent do zmiany tonacji
+// Funkcja zmiany tonacji
 const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; setTranspose: (steps: number) => void }) => {
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
@@ -150,7 +149,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
         </View>
       );
     });
-  };
+  }
 
   useEffect(() => {
     const fetchSongDetail = async () => {

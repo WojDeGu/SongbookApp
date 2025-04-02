@@ -29,3 +29,17 @@ Prosta aplikacja, która ma działać na iOS i android.
 - zmiany w wyglądzie przycisków i przełączników
 - zmiany w czytelności treści piosenek
 - ustawienie alfabetycznie piosenek
+
+**v1.0 ~ 19.03.2025**
+- wprowadzenie aplikacji do sklepi App Store
+- wydanie pierwszej wersji aplikacji
+**1.0.1 ~ 21.03.2025**
+- zmiany nazw kategorii
+**1.0 - android ~ 30.03.2025**
+- wprowadzenie aplikacji do Sklepu Play
+**1.1 ~ 2.04.2025**
+- naprawa karty 'Piosenka' (SongDetail)
+- dodanie nazwy zdobionego tekstu, gdy reklama się nie wygeneruje
+**1.1(.1) ~ 2.04.2025**
+- aktualizacja nie wprowadzona do obiegu
+- czyszczenie kodu 

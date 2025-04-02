@@ -1,21 +1,17 @@
-// ThemeContext.tsx
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Typ dla naszego kontekstu
 type ThemeContextType = {
   theme: 'light' | 'dark';
   toggleTheme: () => void;
 };
 
-// Tworzymy kontekst dla tematu
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light'); // Domyślnie ustawiamy tryb na jasny
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    // Odczytujemy zapisany motyw z AsyncStorage
     const loadTheme = async () => {
       try {
         const storedTheme = await AsyncStorage.getItem('theme');
@@ -35,7 +31,6 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setTheme(newTheme);
 
     try {
-      // Zapisujemy wybrany motyw w AsyncStorage
       await AsyncStorage.setItem('theme', newTheme);
     } catch (error) {
       console.error('Błąd podczas zapisywania motywu: ', error);
@@ -49,7 +44,6 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   );
 };
 
-// Hook do korzystania z kontekstu
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (!context) {

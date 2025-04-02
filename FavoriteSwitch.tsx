@@ -9,14 +9,13 @@ interface FavoriteSwitchProps {
 const FavoriteSwitch: React.FC<FavoriteSwitchProps> = ({ onChangeFavorites }) => {
   const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
 
-  // Ładowanie listy ulubionych piosenek
   useEffect(() => {
     const loadFavorites = async () => {
       try {
         const storedFavorites = await AsyncStorage.getItem('favorites');
         if (storedFavorites) {
           const favoriteIds = JSON.parse(storedFavorites);
-          onChangeFavorites(favoriteIds); // Przekazujemy listę ulubionych do rodzica
+          onChangeFavorites(favoriteIds);
         }
       } catch (error) {
         console.error('Błąd przy ładowaniu listy ulubionych: ', error);
@@ -24,9 +23,9 @@ const FavoriteSwitch: React.FC<FavoriteSwitchProps> = ({ onChangeFavorites }) =>
     };
 
     if (favoritesOnly) {
-      loadFavorites(); // Wczytujemy ulubione tylko, gdy przełącznik jest włączony
+      loadFavorites();
     } else {
-      onChangeFavorites([]); // Jeśli przełącznik jest wyłączony, przekazujemy pustą listę
+      onChangeFavorites([]);
     }
   }, [favoritesOnly, onChangeFavorites]);
 

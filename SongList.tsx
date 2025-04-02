@@ -30,7 +30,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp>();
-  const [storedData, setStoredData] = useState<string | null>(null); // Stan do podglądu
+  const [storedData, setStoredData] = useState<string | null>(null);
 
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles : darkStyles;
@@ -39,7 +39,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
     const loadSongs = async () => {
       try {
         const storedSongs = await AsyncStorage.getItem('songbook.json');
-        setStoredData(storedSongs); // Zapisz dane do podglądu
+        setStoredData(storedSongs);
         if (storedSongs) {
           setSongs(JSON.parse(storedSongs));
         } else {
@@ -172,42 +172,23 @@ const lightStyles = StyleSheet.create({
 });
 
 const darkStyles = StyleSheet.create({
-  songTextContainer:{
-    flex: 1,
-  },
+  ...lightStyles,
   songItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 15,
-    borderBottomWidth: 1,
+    ...lightStyles.songItem,
     borderBottomColor: '#444',
     backgroundColor: '#121212',
   },
   songName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    ...lightStyles.songName,
     color: 'white',
   },
   songCategory: {
-    fontSize: 16,
+    ...lightStyles.songCategory,
     color: '#bbbbbb',
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   loadingText: {
-    marginTop: 10,
-    fontSize: 18,
+    ...lightStyles.loadingText,
     color: '#ffffff',
-  },
-  error: {
-    color: 'red',
-    fontSize: 18,
-    marginTop: 20,
-    textAlign: 'center',
   },
 });
 

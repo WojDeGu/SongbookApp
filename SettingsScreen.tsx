@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
 import ChangelogModal, { useChangelogModal } from './Changelog';
 import env from "./env.js";
-import { useNavigation } from '@react-navigation/native';
 import { MobileAds, AdsConsent, AdsConsentStatus  } from 'react-native-google-mobile-ads';
 
 const API_URL = env.API_URL;
@@ -17,7 +16,6 @@ const SettingsScreen: React.FC = () => {
   const [songCount, setSongCount] = useState<number | null>(null);
   const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
   const { isVisible, showModal, hideModal } = useChangelogModal();
-  const navigation = useNavigation();
 
   useEffect(() => {
       checkLocalData();
@@ -123,8 +121,8 @@ const SettingsScreen: React.FC = () => {
       <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
         <Switch value={theme === 'dark'} onValueChange={toggleTheme} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
-        thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined} // iOS thumb
-        ios_backgroundColor="#E5E5EA" // iOS background
+        thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
+        ios_backgroundColor="#E5E5EA"
         style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
         />
       </View>
@@ -132,8 +130,8 @@ const SettingsScreen: React.FC = () => {
       <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Pokaż regulator czcionki</Text>
         <Switch value={showFontSizeAdjuster} onValueChange={toggleFontSizeAdjuster} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
-          thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined} // iOS thumb
-          ios_backgroundColor="#E5E5EA" // iOS background
+          thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
+          ios_backgroundColor="#E5E5EA"
           style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
         />
       </View>

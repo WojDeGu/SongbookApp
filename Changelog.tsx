@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from './ThemeContext';
 
@@ -68,39 +68,26 @@ const lightStyles = StyleSheet.create({
   },
 });
 const darkStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  ...lightStyles,
   modalContainer: {
-    width: '80%',
+    ...lightStyles.modalContainer,
     backgroundColor: '#282828',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    ...lightStyles.title,
     color: 'white',
   },
   changelogText: {
-    fontSize: 16,
-    textAlign: 'left',
-    marginBottom: 20,
+    ...lightStyles.changelogText,
     color: 'white',
   },
   button: {
+    ...lightStyles.button,
     backgroundColor: '#1E40AF',
-    padding: 10,
-    borderRadius: 5,
   },
   buttonText: {
+    ...lightStyles.buttonText,
     color: '#fff',
-    fontSize: 16,
   },
 });
 

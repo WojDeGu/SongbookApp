@@ -63,7 +63,6 @@ const lightStyles = StyleSheet.create({
     borderRadius: 20,
   },
   selectedItem: {
-    //borderWidth: 2,
     backgroundColor: '#007BFF',
     borderColor: '#0056b3',
   },
