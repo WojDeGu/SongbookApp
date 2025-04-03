@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, DeviceEventEmitter } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, DeviceEventEmitter, useWindowDimensions } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { runOnJS, useSharedValue } from 'react-native-reanimated';
 import { RouteProp } from '@react-navigation/native';
@@ -44,8 +44,10 @@ const transposeChord = (line: string, steps: number): string => {
 
 // Funkcja zmiany wielkości czcionki
 const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFontSize: (size: number) => void }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const { theme } = useTheme();
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
   return (
       <View style={styles.controlsContainer}>
         <TouchableOpacity onPress={() => setFontSize(fontSize - 2)} style={styles.controlButton}>
@@ -81,8 +83,10 @@ const usePinchToZoom = (fontSize: number, setFontSize: (size: number) => void) =
 
 // Funkcja zmiany tonacji
 const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; setTranspose: (steps: number) => void }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const { theme } = useTheme();
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
   return (
     <View style={styles.controlsContainer}>
       <TouchableOpacity onPress={() => setTranspose(Math.max(-11, transpose - 1))}
@@ -102,15 +106,17 @@ const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; set
 
 const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   const { songId } = route.params;
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const [songDetail, setSongDetail] = useState<Song | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [fontSize, setFontSize] = useState<number>(16);
+  const [fontSize, setFontSize] = useState<number>(isTablet ? 24 : 16);
   const [transpose, setTranspose] = useState<number>(0);
   const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
 
   const { theme } = useTheme();
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
   const pinchGesture = usePinchToZoom(fontSize, setFontSize);
 
   const renderSongContent = (content: { lyrics: string; chords?: string }[]) => {
@@ -228,7 +234,7 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   );
 };
 
-const lightStyles = StyleSheet.create({
+const lightStyles = (isTablet: boolean) => StyleSheet.create({
   controlsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -247,7 +253,7 @@ const lightStyles = StyleSheet.create({
   },
   controlButtonText: {
     color: 'white',
-    fontSize: 24,
+    fontSize: isTablet? 32:24,
     fontWeight: 'bold',
   },
   transposeControlsContainer: {
@@ -257,7 +263,7 @@ const lightStyles = StyleSheet.create({
     marginVertical: 10,
   },
   transposeText: {
-    fontSize: 18,
+    fontSize: isTablet? 24:18,
     fontWeight: 'bold',
     color: '#888888',
     marginHorizontal: 10,
@@ -276,13 +282,13 @@ const lightStyles = StyleSheet.create({
     marginTop: 15,
   },
   songName: {
-    fontSize: 24,
+    fontSize: isTablet? 32:24,
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
   },
   songCategory: {
-    fontSize: 18,
+    fontSize: isTablet ? 24:18,
     marginVertical: 10,
     color: '#666666',
     textAlign: 'center',
@@ -292,12 +298,6 @@ const lightStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
     marginBottom: 10,
-  },
-  songNumber: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 10,
-    color: '#333333',
   },
   songLyrics: {
     flex: 3,
@@ -331,38 +331,34 @@ const lightStyles = StyleSheet.create({
   },
 });
 
-const darkStyles = StyleSheet.create({
-  ...lightStyles,
+const darkStyles = (isTablet: boolean) => StyleSheet.create({
+  ...lightStyles(isTablet),
   container: {
-    ...lightStyles.container,
+    ...lightStyles(isTablet).container,
     backgroundColor: '#121212',
   },
   header: {
-    ...lightStyles.header,
+    ...lightStyles(isTablet).header,
     backgroundColor: '#1E40AF',
   },
   songCategory: {
-    ...lightStyles.songCategory,
+    ...lightStyles(isTablet).songCategory,
     color: '#bbbbbb',
   },
   controlButton: {
-    ...lightStyles.controlButton,
+    ...lightStyles(isTablet).controlButton,
     backgroundColor: '#1E40AF',
   },
   transposeText: {
-    ...lightStyles.transposeText,
+    ...lightStyles(isTablet).transposeText,
     color: 'white',
   },
-  songNumber: {
-    ...lightStyles.songNumber,
-    color: '#FFA726',
-  },
   songLyrics: {
-    ...lightStyles.songLyrics,
+    ...lightStyles(isTablet).songLyrics,
     color: '#DDDDDD',
   },
   songChords: {
-    ...lightStyles.songChords,
+    ...lightStyles(isTablet).songChords,
     color: '#FFCC00',
   },
   loadingText: {

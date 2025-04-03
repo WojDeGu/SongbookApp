@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, DeviceEventEmitter, Linking, Switch, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, DeviceEventEmitter, Linking, Switch, Platform, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
 import ChangelogModal, { useChangelogModal } from './Changelog';
@@ -11,11 +11,14 @@ const USER_AGENT = env.USER_AGENT;
 const LOCAL_STORAGE_KEY = 'songbook.json';
 
 const SettingsScreen: React.FC = () => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const { theme, toggleTheme } = useTheme();
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [songCount, setSongCount] = useState<number | null>(null);
   const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
   const { isVisible, showModal, hideModal } = useChangelogModal();
+  
 
   useEffect(() => {
       checkLocalData();
@@ -109,7 +112,7 @@ const SettingsScreen: React.FC = () => {
     );
   };
 
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
   return (
     <View style={styles.container}>
@@ -120,19 +123,19 @@ const SettingsScreen: React.FC = () => {
 
       <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Tryb: {theme === 'light' ? 'Jasny' : 'Ciemny'}</Text>
-        <Switch value={theme === 'dark'} onValueChange={toggleTheme} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
+        <Switch value={theme === 'dark'} onValueChange={toggleTheme} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
         thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
         ios_backgroundColor="#E5E5EA"
-        style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
+        style={Platform.OS === 'android'? { transform: isTablet? [{ scaleX: 1.6 }, { scaleY: 1.6 }]:[{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
         />
       </View>
 
       <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Pokaż regulator czcionki</Text>
-        <Switch value={showFontSizeAdjuster} onValueChange={toggleFontSizeAdjuster} trackColor={{ false: '#E5E5EA', true: '#34C759' }} // iOS colors
+        <Switch value={showFontSizeAdjuster} onValueChange={toggleFontSizeAdjuster} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
           thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
           ios_backgroundColor="#E5E5EA"
-          style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }} // Skalowanie dla Androida
+          style={Platform.OS === 'android'? { transform: isTablet? [{ scaleX: 1.6 }, { scaleY: 1.6 }]:[{ scaleX: 1.2 }, { scaleY: 1.2 }], marginRight: isTablet? 15:5 } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
         />
       </View>
 
@@ -154,7 +157,7 @@ const SettingsScreen: React.FC = () => {
   );
 };
 
-const lightStyles = StyleSheet.create({
+const lightStyles = (isTablet: boolean) => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -163,13 +166,13 @@ const lightStyles = StyleSheet.create({
   },
   songCount: {
     marginTop: 20,
-    fontSize: 24,
+    fontSize: isTablet ? 36:24,
     textAlign: 'center',
     marginBottom: 10,
     color: '#000000',
   },
   title: {
-    fontSize: 24,
+    fontSize: isTablet ? 28:24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -179,7 +182,7 @@ const lightStyles = StyleSheet.create({
     marginBottom: 20,
   },
   switchLabel: {
-    fontSize: 18,
+    fontSize: isTablet? 24:18,
     marginRight: 10,
   },
   buttonBlue:{
@@ -207,10 +210,11 @@ const lightStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 3,
+    marginBottom: 20,
   },
   buttonText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: isTablet? 20:16,
     fontWeight: 'bold',
   },
   bottomButtonsContainer: {
@@ -223,34 +227,34 @@ const lightStyles = StyleSheet.create({
   },
 });
 
-const darkStyles = StyleSheet.create({
-  ...lightStyles,
+const darkStyles = (isTablet: boolean) => StyleSheet.create({
+  ...lightStyles(isTablet),
   container: {
-    ...lightStyles.container,
+    ...lightStyles(isTablet).container,
     backgroundColor: '#121212',
   },
   title: {
-    ...lightStyles.title,
+    ...lightStyles(isTablet).title,
     color: '#ffffff',
   },
   switchLabel: {
-    ...lightStyles.switchLabel,
+    ...lightStyles(isTablet).switchLabel,
     color: '#ffffff',
   },
   buttonBlue:{
-    ...lightStyles.buttonBlue,
+    ...lightStyles(isTablet).buttonBlue,
     backgroundColor: '#1E40AF',
   },
   buttonPink:{
-    ...lightStyles.buttonPink,
+    ...lightStyles(isTablet).buttonPink,
     backgroundColor: '#DE5285',
   },
   songCount:{
-    ...lightStyles.songCount,
+    ...lightStyles(isTablet).songCount,
     color: 'white',
   },
   bottomButtonsContainer:{
-    ...lightStyles.bottomButtonsContainer,
+    ...lightStyles(isTablet).bottomButtonsContainer,
   }
 });
 

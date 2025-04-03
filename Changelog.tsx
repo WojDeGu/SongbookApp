@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from './ThemeContext';
 
 const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: () => void }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const { theme } = useTheme();
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
   return (
     <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.overlay}>
@@ -33,7 +35,7 @@ export const useChangelogModal = () => {
   return { isVisible, showModal, hideModal };
 };
 
-const lightStyles = StyleSheet.create({
+const lightStyles = (isTablet: boolean) => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -48,12 +50,12 @@ const lightStyles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: isTablet ? 26:20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
   changelogText: {
-    fontSize: 16,
+    fontSize: isTablet ? 22:16,
     textAlign: 'left',
     marginBottom: 20,
   },
@@ -64,29 +66,29 @@ const lightStyles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: isTablet? 22:16,
   },
 });
-const darkStyles = StyleSheet.create({
-  ...lightStyles,
+const darkStyles = (isTablet: boolean) => StyleSheet.create({
+  ...lightStyles(isTablet),
   modalContainer: {
-    ...lightStyles.modalContainer,
+    ...lightStyles(isTablet).modalContainer,
     backgroundColor: '#282828',
   },
   title: {
-    ...lightStyles.title,
+    ...lightStyles(isTablet).title,
     color: 'white',
   },
   changelogText: {
-    ...lightStyles.changelogText,
+    ...lightStyles(isTablet).changelogText,
     color: 'white',
   },
   button: {
-    ...lightStyles.button,
+    ...lightStyles(isTablet).button,
     backgroundColor: '#1E40AF',
   },
   buttonText: {
-    ...lightStyles.buttonText,
+    ...lightStyles(isTablet).buttonText,
     color: '#fff',
   },
 });

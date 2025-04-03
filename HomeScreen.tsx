@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, Platform, useWindowDimensions } from 'react-native';
 import CategoryPicker from './CategoryPicker';
 import SongList from './SongList';
 import { useTheme } from './ThemeContext';
@@ -23,6 +23,8 @@ const HomeScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
   const [songs, setSongs] = useState<any[]>([]);
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
 
   const requestATT = async () => {
     if (Platform.OS === 'ios') {
@@ -160,7 +162,7 @@ const HomeScreen: React.FC = () => {
     setIsSearchVisible(!isSearchVisible);
   }
 
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
   
   return (
     <View style={styles.container}>
@@ -207,14 +209,14 @@ const HomeScreen: React.FC = () => {
 };
 
 
-const lightStyles = StyleSheet.create({
+const lightStyles = (isTablet: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: isTablet ? 40 : 20,
     backgroundColor: '#ffffff',
   },
   title: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 20,
@@ -231,13 +233,13 @@ const lightStyles = StyleSheet.create({
     marginBottom: 10,
   },
   switchLabel: {
-    fontSize: 16,
+    fontSize: isTablet? 20:16,
     marginRight: 10,
     color: '#000000',
   },
   searchButton: {
-    width: 40,
-    height: 32,
+    width: isTablet ? 50 : 40,
+    height: isTablet ? 50 : 32,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 5,
@@ -251,7 +253,7 @@ const lightStyles = StyleSheet.create({
   },
   buttonText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: isTablet? 20:16,
     fontWeight: 'bold',
   },
   songCount: {
@@ -262,30 +264,30 @@ const lightStyles = StyleSheet.create({
   },
 });
 
-const darkStyles = StyleSheet.create({
-  ...lightStyles,
+const darkStyles = (isTablet: boolean) => StyleSheet.create({
+  ...lightStyles(isTablet),
   container: {
-    ...lightStyles.container,
+    ...lightStyles(isTablet).container,
     backgroundColor: '#121212',
   },
   title: {
-    ...lightStyles.title,
+    ...lightStyles(isTablet).title,
     color: '#ffffff',
   },
   switchLabel: {
-    ...lightStyles.switchLabel,
+    ...lightStyles(isTablet).switchLabel,
     color: '#ffffff',
   },
   button: {
-    ...lightStyles.button,
+    ...lightStyles(isTablet).button,
     backgroundColor: '#1E40AF',
   },
   buttonText: {
-    ...lightStyles.buttonText,
+    ...lightStyles(isTablet).buttonText,
     color: '#ffffff',
   },
   songCount: {
-    ...lightStyles.songCount,
+    ...lightStyles(isTablet).songCount,
     color: '#ffffff',
   },
 });

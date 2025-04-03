@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { FlatList, TouchableOpacity, Text, StyleSheet, ActivityIndicator, View, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './App';
@@ -31,9 +31,11 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp>();
   const [storedData, setStoredData] = useState<string | null>(null);
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
 
   const { theme } = useTheme();
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
   useEffect(() => {
     const loadSongs = async () => {
@@ -131,7 +133,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   );
 };
 
-const lightStyles = StyleSheet.create({
+const lightStyles = (isTablet: boolean) => StyleSheet.create({
   songTextContainer: {
     flex: 1,
   },
@@ -145,12 +147,12 @@ const lightStyles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   songName: {
-    fontSize: 18,
+    fontSize: isTablet? 24:18,
     fontWeight: 'bold',
     color: '#000000',
   },
   songCategory: {
-    fontSize: 16,
+    fontSize: isTablet? 20:16,
     color: '#888888',
   },
   loadingContainer: {
@@ -171,23 +173,23 @@ const lightStyles = StyleSheet.create({
   },
 });
 
-const darkStyles = StyleSheet.create({
-  ...lightStyles,
+const darkStyles = (isTablet: boolean) => StyleSheet.create({
+  ...lightStyles(isTablet),
   songItem: {
-    ...lightStyles.songItem,
+    ...lightStyles(isTablet).songItem,
     borderBottomColor: '#444',
     backgroundColor: '#121212',
   },
   songName: {
-    ...lightStyles.songName,
+    ...lightStyles(isTablet).songName,
     color: 'white',
   },
   songCategory: {
-    ...lightStyles.songCategory,
+    ...lightStyles(isTablet).songCategory,
     color: '#bbbbbb',
   },
   loadingText: {
-    ...lightStyles.loadingText,
+    ...lightStyles(isTablet).loadingText,
     color: '#ffffff',
   },
 });

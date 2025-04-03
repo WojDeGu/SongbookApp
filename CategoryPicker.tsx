@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from './ThemeContext';
 
 interface CategoryPickerProps {
@@ -8,8 +8,10 @@ interface CategoryPickerProps {
 }
 
 const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSelectCategory }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const { theme } = useTheme();
-  const styles = theme === 'light' ? lightStyles : darkStyles;
+  const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
   const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Wielkanoc', 'Wielki Post', 'Adwent'];
 
@@ -42,7 +44,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
   );
 };
 
-const lightStyles = StyleSheet.create({
+const lightStyles = (isTablet: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     marginBottom: 20,
@@ -67,7 +69,7 @@ const lightStyles = StyleSheet.create({
     borderColor: '#0056b3',
   },
   itemText: {
-    fontSize: 16,
+    fontSize: isTablet? 20:16,
     color: '#333333',
   },
   selectedItemText: {
@@ -76,37 +78,28 @@ const lightStyles = StyleSheet.create({
   },
 });
 
-const darkStyles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginBottom: 20,
-  },
+const darkStyles = (isTablet: boolean) => StyleSheet.create({
+  ...lightStyles(isTablet),
   label: {
-    fontSize: 18,
-    marginBottom: 10,
-    fontWeight: 'bold',
+    ...lightStyles(isTablet).label,
     color: '#ffffff',
   },
   item: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    marginHorizontal: 5,
-    borderWidth: 1,
+    ...lightStyles(isTablet).item,
     borderColor: '#555',
-    backgroundColor: '#222222',
-    borderRadius: 20,
+    backgroundColor: '#222222'
   },
   selectedItem: {
-    borderWidth: 2,
+    ...lightStyles(isTablet).selectedItem,
     backgroundColor: '#1E40AF',
     borderColor: '#0056b3',
   },
   itemText: {
-    fontSize: 16,
+    ...lightStyles(isTablet).itemText,
     color: '#dddddd',
   },
   selectedItemText: {
-    fontWeight: 'bold',
+    ...lightStyles(isTablet).selectedItemText,
     color: '#ffffff',
   },
 });
