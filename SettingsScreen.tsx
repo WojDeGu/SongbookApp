@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, DeviceEventEmitter, Linking, Switch, Platform, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
@@ -17,6 +17,7 @@ const SettingsScreen: React.FC = () => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [songCount, setSongCount] = useState<number | null>(null);
   const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
+  const [showAutoScroll, setShowAutoScroll] = useState<boolean>(false);
   const { isVisible, showModal, hideModal } = useChangelogModal();
   
 
@@ -24,8 +25,12 @@ const SettingsScreen: React.FC = () => {
       checkLocalData();
       const loadSettings = async () => {
         const storedValue = await AsyncStorage.getItem('showFontSizeAdjuster');
+        const storedValueScroll = await AsyncStorage.getItem('showAutoScroll')
         if (storedValue !== null) {
           setShowFontSizeAdjuster(JSON.parse(storedValue));
+        }
+        if (storedValueScroll !== null) {
+          setShowAutoScroll(JSON.parse(storedValueScroll));
         }
       };
       loadSettings();
@@ -38,6 +43,13 @@ const SettingsScreen: React.FC = () => {
     await AsyncStorage.setItem('showFontSizeAdjuster', JSON.stringify(newValue));
 
     DeviceEventEmitter.emit('updateFontSizeAdjuster', newValue);
+  };
+  const toggleAutoScroll = async () => {
+    const newValue = !showAutoScroll;
+    setShowAutoScroll(newValue);
+    await AsyncStorage.setItem('showAutoScroll', JSON.stringify(newValue));
+
+    DeviceEventEmitter.emit('updateAutoScroll', newValue);
   };
 
   // Komponent do sprawdzania bazy piosenek
@@ -133,6 +145,14 @@ const SettingsScreen: React.FC = () => {
       <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Pokaż regulator czcionki</Text>
         <Switch value={showFontSizeAdjuster} onValueChange={toggleFontSizeAdjuster} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+          thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
+          ios_backgroundColor="#E5E5EA"
+          style={Platform.OS === 'android'? { transform: isTablet? [{ scaleX: 1.6 }, { scaleY: 1.6 }]:[{ scaleX: 1.2 }, { scaleY: 1.2 }], marginRight: isTablet? 15:5 } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
+        />
+      </View>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Pokaż AutoScroll</Text>
+        <Switch value={showAutoScroll} onValueChange={toggleAutoScroll} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
           thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
           ios_backgroundColor="#E5E5EA"
           style={Platform.OS === 'android'? { transform: isTablet? [{ scaleX: 1.6 }, { scaleY: 1.6 }]:[{ scaleX: 1.2 }, { scaleY: 1.2 }], marginRight: isTablet? 15:5 } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}

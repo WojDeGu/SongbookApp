@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, DeviceEventEmitter, useWindowDimensions } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { runOnJS, useSharedValue } from 'react-native-reanimated';
 import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AutoScroll from './AutoScroll';
 
 type RootStackParamList = {
   HomeScreen: undefined;
@@ -114,10 +115,17 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   const [fontSize, setFontSize] = useState<number>(isTablet ? 24 : 16);
   const [transpose, setTranspose] = useState<number>(0);
   const [showFontSizeAdjuster, setShowFontSizeAdjuster] = useState<boolean>(false);
+  const [showAutoScroll, setShowAutoScroll] = useState<boolean>(false);
 
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
   const pinchGesture = usePinchToZoom(fontSize, setFontSize);
+
+  const listRef = useRef<FlatList>(null);
+  const scrollOffset = useRef(0);
+  const scrollInterval = useRef<number | null>(null);
+  const contentHeight = useRef(0);
+  const containerHeight = useRef(0);
 
   const renderSongContent = (content: { lyrics: string; chords?: string }[]) => {
     let isChorus = false;
@@ -142,8 +150,8 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
           key={index} 
           style={[
             styles.songContentRow,
-            index === chorusStartIndex ? { marginTop: 15 } : {}, // Odstęp przed refrenem
-            isVerseStart && !isChorusStart ? { marginTop: 15 } : {} // Odstęp po refrenie przed zwrotką
+            index !== 0 && index === chorusStartIndex ? { marginTop: 15 } : {}, // Odstęp przed refrenem
+            index !== 0 && isVerseStart && !isChorusStart ? { marginTop: 15 } : {} // Odstęp po refrenie przed zwrotką
           ]}
         >
           <Text style={[styles.songLyrics, { fontSize }, isChorus && { fontWeight: "bold" }, isAuthor && { fontStyle: "italic", fontWeight: "300", marginTop: 20 }]}>
@@ -180,18 +188,26 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
     };
     const loadSettings = async () => {
       const storedValue = await AsyncStorage.getItem('showFontSizeAdjuster');
+      const storedValueScroll = await AsyncStorage.getItem('showAutoScroll');
       if (storedValue !== null) {
         setShowFontSizeAdjuster(JSON.parse(storedValue));
+      }
+      if (storedValueScroll !== null) {
+        setShowAutoScroll(JSON.parse(storedValueScroll));
       }
     };
     
     fetchSongDetail();
     loadSettings();
-    const subscription = DeviceEventEmitter.addListener('updateFontSizeAdjuster', (value: boolean) => {
+    const fontSizeSubscription = DeviceEventEmitter.addListener('updateFontSizeAdjuster', (value: boolean) => {
       setShowFontSizeAdjuster(value);
     });
+    const AutoScrollSubscription = DeviceEventEmitter.addListener('updateAutoScroll', (value: boolean) => {
+      setShowAutoScroll(value);
+    });
     return () => {
-      subscription.remove();
+      fontSizeSubscription.remove();
+      AutoScrollSubscription.remove();
     };
   }, [songId]);
 
@@ -207,6 +223,34 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
   if (error) {
     return <Text style={styles.error}>{error}</Text>;
   }
+
+  const handleAutoScrollStart = (speed: number) => {
+    if (scrollInterval.current) clearInterval(scrollInterval.current);
+  
+    const scrollStep = speed * 10;
+    const intervalMs = 100;
+  
+    scrollInterval.current = Number(setInterval(() => {
+      scrollOffset.current += scrollStep;
+  
+      if (listRef.current) {
+        listRef.current.scrollToOffset({
+          offset: scrollOffset.current,
+          animated: true,
+        });
+        if (scrollOffset.current + containerHeight.current >= contentHeight.current) {
+          handleAutoScrollStop();
+        }
+      }
+    }, intervalMs));
+  };
+  
+  const handleAutoScrollStop = () => {
+    if (scrollInterval.current) {
+      clearInterval(scrollInterval.current);
+      scrollInterval.current = null;
+    }
+  };
   
   return (
     <GestureDetector gesture={pinchGesture}>
@@ -218,16 +262,31 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
           <Text style={styles.songCategory}>{songDetail?.category}</Text>
           {showFontSizeAdjuster && <FontSizeAdjuster fontSize={fontSize} setFontSize={setFontSize} /> }
           <TransposeAdjuster transpose={transpose} setTranspose={setTranspose} />
+          {showAutoScroll && <AutoScroll onStart={handleAutoScrollStart} onStop={handleAutoScrollStop}/>}
         </View>
 
         <FlatList
           style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff', flex: 1 }}
+          ref={listRef}
           data={songDetail?.content || []}
           keyExtractor={(item, index) => index.toString()}
           renderItem={() => null}
           ListFooterComponent={<View>{renderSongContent(songDetail?.content || [])}</View>}
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps="handled"
+          onScroll={(event) => {
+            scrollOffset.current = event.nativeEvent.contentOffset.y;
+            if (scrollOffset.current + containerHeight.current >= contentHeight.current) {
+              handleAutoScrollStop();
+            }
+          }}
+          onLayout={(event) => {
+            containerHeight.current = event.nativeEvent.layout.height;
+          }}
+          onContentSizeChange={(_, height) => {
+            contentHeight.current = height;
+          }}
+          scrollEventThrottle={16}
         />
       </View>
     </GestureDetector>
@@ -270,7 +329,7 @@ const lightStyles = (isTablet: boolean) => StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    padding: 20,
+    paddingHorizontal: 15,
     backgroundColor: '#ffffff',
   },
   header: {
