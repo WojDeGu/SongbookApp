@@ -54,7 +54,7 @@ const lightStyles = StyleSheet.create({
     padding: 5,
   },
   clearText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#999',
   }
