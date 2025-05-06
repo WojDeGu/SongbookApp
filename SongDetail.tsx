@@ -135,7 +135,8 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
       const isChorusStart = /^Ref[\.:]/i.test(item.lyrics.trim());
       const isVerseStart = /^\d+\./.test(item.lyrics.trim());
       const isAuthor = /^\/\/(.+?)\/\/$/.test(item.lyrics.trim());
-  
+      const isLast = index === content.length - 1; // ostatnia linijka
+
       if (isChorusStart) {
         isChorus = true;
         chorusStartIndex = index;
@@ -150,8 +151,9 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
           key={index} 
           style={[
             styles.songContentRow,
-            index === chorusStartIndex ? { marginTop: 15 } : {}, // odstęp przed refrenem, index !== 0 && <- brak odstępu przy pierwszej linijce
+            index === chorusStartIndex ? { marginTop: 15 } : {}, // odstęp przed refrenem,  <- brak odstępu przy pierwszej linijce
             isVerseStart && !isChorusStart ? { marginTop: 15 }: {}, // odstęp po refrenie przed zwrotką, index !== 0 && <- brak odstępu przy pierwszej linijce 
+            isLast ? { marginBottom: 40 } : {}, //ostatnia linijka ma odstęp od dołu
           ]}
         >
           <Text style={[styles.songLyrics, { fontSize }, isChorus && { fontWeight: "bold" }, isAuthor && { fontStyle: "italic", fontWeight: "300", marginTop: 20 }]}>
