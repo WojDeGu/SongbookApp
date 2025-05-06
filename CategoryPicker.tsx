@@ -13,7 +13,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
-  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Wielkanoc', 'Wielki Post', 'Adwent',];
+  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Wielkanoc', 'Wielki Post', 'Adwent'];
 
   const categoryStyles: Record<
     string,
@@ -33,7 +33,14 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
       selectedBorderColor: '#e01c2b',
       backgroundImage: require('./assets/SDB.png'),
     },
-  };
+    //Lednica2000:{
+    //  selectedBackgroundColor: '#767209',
+    //  selectedTextColor: '#ffffff',
+    //  selectedBorderColor: '#767209',
+    //  backgroundImage: require('./assets/Lednica2000.png'),
+    //},
+    
+  }; // nazwy kilku wyrazowe pisać w cudzysłowie np. "Wielki Post"
 
   return (
     <View style={styles.container}>
