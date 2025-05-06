@@ -150,8 +150,8 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
           key={index} 
           style={[
             styles.songContentRow,
-            index !== 0 && index === chorusStartIndex ? { marginTop: 15 } : {}, // Odstęp przed refrenem
-            index !== 0 && isVerseStart && !isChorusStart ? { marginTop: 15 } : {} // Odstęp po refrenie przed zwrotką
+            index === chorusStartIndex ? { marginTop: 15 } : {}, // odstęp przed refrenem, index !== 0 && <- brak odstępu przy pierwszej linijce
+            isVerseStart && !isChorusStart ? { marginTop: 15 }: {}, // odstęp po refrenie przed zwrotką, index !== 0 && <- brak odstępu przy pierwszej linijce 
           ]}
         >
           <Text style={[styles.songLyrics, { fontSize }, isChorus && { fontWeight: "bold" }, isAuthor && { fontStyle: "italic", fontWeight: "300", marginTop: 20 }]}>

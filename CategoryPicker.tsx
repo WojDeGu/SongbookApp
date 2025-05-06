@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, StyleSheet, useWindowDimensions, ImageBackground } from 'react-native';
 import { useTheme } from './ThemeContext';
 
 interface CategoryPickerProps {
@@ -13,32 +13,88 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
-  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Wielkanoc', 'Wielki Post', 'Adwent'];
+  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Wielkanoc', 'Wielki Post', 'Adwent', 'Salezjanie'];
+
+  const categoryStyles: Record<
+    string,
+    {
+      backgroundColor?: string;
+      textColor?: string;
+      borderColor?: string;
+      selectedBackgroundColor?: string;
+      selectedTextColor?: string;
+      selectedBorderColor?: string;
+      backgroundImage?: any;
+    }
+  > = {
+    Salezjanie: {
+      selectedBackgroundColor: '#e01c2b',
+      selectedTextColor: '#ffffff',
+      selectedBorderColor: '#e01c2b',
+      backgroundImage: require('./assets/SDB.png'),
+    },
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.item,
-              category === selectedCategory && styles.selectedItem,
-            ]}
-            onPress={() => {
-              onSelectCategory(category === selectedCategory ? null : category);
-            }}
-          >
-            <Text
-              style={[
-                styles.itemText,
-                category === selectedCategory && styles.selectedItemText,
-              ]}
-            >
+        {categories.map((category) => {
+          const customStyle = categoryStyles[category] || {};
+          const isSelected = category === selectedCategory;
+
+          const backgroundColor = isSelected
+            ? customStyle.selectedBackgroundColor || styles.selectedItem.backgroundColor
+            : customStyle.backgroundColor || styles.item.backgroundColor;
+
+          const textColor = isSelected
+            ? customStyle.selectedTextColor || styles.selectedItemText.color
+            : customStyle.textColor || styles.itemText.color;
+          
+           const borderColor = isSelected
+            ? customStyle.selectedBorderColor || styles.selectedItem.borderColor
+            : customStyle.borderColor || styles.item.borderColor;
+
+          const buttonStyle = [
+            styles.item,
+            isSelected && styles.selectedItem,
+            backgroundColor && { backgroundColor },
+            borderColor && { borderColor },
+          ];
+
+          const textStyle = [
+            styles.itemText,
+            isSelected && styles.selectedItemText,
+            textColor && { color: textColor },
+          ];
+
+          const content = (
+            <Text style={textStyle}>
               {category}
             </Text>
-          </TouchableOpacity>
-        ))}
+          );
+
+          return (
+            <TouchableOpacity
+              key={category}
+              onPress={() => onSelectCategory(isSelected ? null : category)}
+              style={{ marginHorizontal: 5 }}
+            >
+              {isSelected && customStyle.backgroundImage ? (
+                <ImageBackground
+                  source={customStyle.backgroundImage}
+                  style={[...buttonStyle, { justifyContent: 'center', alignItems: 'center' }]}
+                  imageStyle={{ borderRadius: 20, resizeMode: 'cover', opacity: 0.3 }}
+                >
+                  {content}
+                </ImageBackground>
+              ) : (
+                <View style={buttonStyle}>
+                  {content}
+                </View>
+              )}
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     </View>
   );
