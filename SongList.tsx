@@ -8,11 +8,17 @@ import FavoriteButton from './FavoriteButton';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+interface SongLine {
+  lyrics: string;
+  chords?: string;
+}
+
 interface Song {
   id: number;
   name: string;
   category: string;
   isFavorite: boolean;
+  content?: SongLine[];
 }
 
 interface SongListProps {
@@ -77,12 +83,29 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
     if (favoritesOnly && !favoriteSongIds.includes(song.id)) {
       return false;
     }
+
     if (selectedCategory && song.category !== selectedCategory) {
       return false;
     }
-    if (searchQuery && !song.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+
+      const normalize = (text: string) => text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, '').replace(/\s{2,}/g, ' ').trim();
+
+      const normalizedQuery = normalize(searchQuery);
+
+      const nameMatch = normalize(song.name).includes(normalizedQuery);
+      const categoryMatch = normalize(song.category || '').includes(normalizedQuery);
+      const lyricsMatch = song.content?.some((line: SongLine) =>
+        normalize(line.lyrics || '').includes(normalizedQuery)
+      );
+
+      if (!nameMatch && !categoryMatch && !lyricsMatch) {
+        return false;
+      }
     }
+
     return true;
   }).sort((a, b) => a.name.localeCompare(b.name));
 
