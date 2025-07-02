@@ -97,9 +97,8 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
 
       const nameMatch = normalize(song.name).includes(normalizedQuery);
       const categoryMatch = normalize(song.category || '').includes(normalizedQuery);
-      const lyricsMatch = song.content?.some((line: SongLine) =>
-        normalize(line.lyrics || '').includes(normalizedQuery)
-      );
+      const lyricsMatch = Array.isArray(song.content) && song.content.some((line: SongLine) =>
+      typeof line.lyrics === 'string' && normalize(line.lyrics).includes(normalizedQuery));
 
       if (!nameMatch && !categoryMatch && !lyricsMatch) {
         return false;
@@ -136,7 +135,6 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
 
   return (
     <FlatList
-      key={songs.length}
       data={filteredSongs}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
