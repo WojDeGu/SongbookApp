@@ -13,7 +13,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
-  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Wielkanoc', 'Wielki Post', 'Adwent'];
+  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Salezjańskie', 'Wielkanoc', 'Wielki Post', 'Adwent'];
 
   const categoryStyles: Record<
     string,
@@ -27,11 +27,11 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
       backgroundImage?: any;
     }
   > = {
-    Salezjanie: {
-      selectedBackgroundColor: '#e01c2b',
+    Salezjańskie: {
+      selectedBackgroundColor: '#5d2002d6',
       selectedTextColor: '#ffffff',
-      selectedBorderColor: '#e01c2b',
-      backgroundImage: require('./assets/SDB.png'),
+      selectedBorderColor: '#5d2002d6',
+      backgroundImage: require('./assets/SDB.jpeg'),
     },
     
   }; // nazwy kilku wyrazowe pisać w cudzysłowie np. "Wielki Post"

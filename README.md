@@ -31,7 +31,7 @@ Prosta aplikacja, która ma działać na iOS i android.
 - ustawienie alfabetycznie piosenek
 
 **v1.0 ~ 19.03.2025**
-- wprowadzenie aplikacji do sklepi App Store
+- wprowadzenie aplikacji do sklepu App Store
 - wydanie pierwszej wersji aplikacji
 **1.0.1 ~ 21.03.2025**
 - zmiany nazw kategorii
