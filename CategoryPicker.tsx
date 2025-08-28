@@ -31,7 +31,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
       selectedBackgroundColor: '#5d2002d6',
       selectedTextColor: '#ffffff',
       selectedBorderColor: '#5d2002d6',
-      backgroundImage: require('./assets/SDB.jpeg'),
+      backgroundImage: require('./assets/src/SDB.jpeg'),
     },
     
   }; // nazwy kilku wyrazowe pisać w cudzysłowie np. "Wielki Post"
