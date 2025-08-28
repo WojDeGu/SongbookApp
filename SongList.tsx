@@ -36,7 +36,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp>();
-  const [storedData, setStoredData] = useState<string | null>(null);
+  // local cache not used directly; kept minimal
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 
@@ -46,8 +46,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   useEffect(() => {
     const loadSongs = async () => {
       try {
-        const storedSongs = await AsyncStorage.getItem('songbook.json');
-        setStoredData(storedSongs);
+  const storedSongs = await AsyncStorage.getItem('songbook.json');
         if (storedSongs) {
           setSongs(JSON.parse(storedSongs));
         } else {
@@ -88,9 +87,7 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
       return false;
     }
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-
+  if (searchQuery) {
       const normalize = (text: string) => text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, '').replace(/\s{2,}/g, ' ').trim();
 
       const normalizedQuery = normalize(searchQuery);

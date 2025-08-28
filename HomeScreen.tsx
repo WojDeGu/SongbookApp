@@ -10,6 +10,7 @@ import { Svg, Path } from 'react-native-svg';
 import env from "./env.js";
 import {AdsConsent, AdsConsentStatus } from 'react-native-google-mobile-ads';
 import { requestTrackingPermission } from 'react-native-tracking-transparency';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const API_URL = env.API_URL;
 const LOCAL_STORAGE_KEY = 'songbook.json';
@@ -17,14 +18,16 @@ const LOCAL_STORAGE_KEY = 'songbook.json';
 const HomeScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [favoriteSongIds, setFavoriteSongIds] = useState<number[]>([]);
   const [songCount, setSongCount] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
   const [songs, setSongs] = useState<any[]>([]);
   const { width } = useWindowDimensions();
+  const nav = useNavigation<any>();
   const isTablet = width >= 768;
+  const [presetsSwitch, setPresetsSwitch] = useState(false);
 
   const requestATT = async () => {
     if (Platform.OS === 'ios') {
@@ -47,6 +50,14 @@ const HomeScreen: React.FC = () => {
       checkPrivacyConsent();
     }
   }, []);
+
+  // reset Presety switch when returning to Home
+  useFocusEffect(
+    React.useCallback(() => {
+      setPresetsSwitch(false);
+      return () => {};
+    }, [])
+  );
   // funkcja sprawdzania, czy formularz prywatności został wcześniej wykonany
   const checkPrivacyConsent = async () => {
     try {
@@ -170,23 +181,75 @@ const HomeScreen: React.FC = () => {
       <Text style={styles.title}>Wybierz kategorię</Text>
       <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={handleCategoryChange} />
       <View style={styles.switches}>
-        <View style={styles.switchContainer}>
-          <Text style={styles.switchLabel}>Ulubione</Text>
-          <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+        {isTablet ? (
+          <>
+            <View style={styles.switchesLeft}>
+              <View style={[styles.switchContainer, { marginRight: 24 }]}>
+                <Text style={styles.switchLabel}>Ulubione</Text>
+                <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+                        thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
+                        ios_backgroundColor="#E5E5EA"
+                        style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
+                        />
+              </View>
+              <View style={styles.switchContainer}>
+                <Text style={styles.switchLabel}>Presety</Text>
+                <Switch
+                  value={presetsSwitch}
+                  onValueChange={(v) => {
+                    setPresetsSwitch(v);
+                    if (v) nav.navigate('PresetList');
+                  }}
+                  trackColor={{ false: '#E5E5EA', true: '#1E40AF' }}
                   thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
                   ios_backgroundColor="#E5E5EA"
                   style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
-                  />
-        </View>
-
-        <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>
-          <Svg width={28} height={28} viewBox="0 0 24 24" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <Path 
-              stroke={theme === 'light' ? '#000' : '#fff'} 
-              d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
-            />
-          </Svg>
-        </TouchableOpacity>
+                />
+              </View>
+            </View>
+            <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>
+              <Svg width={28} height={28} viewBox="0 0 24 24" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <Path 
+                  stroke={theme === 'light' ? '#000' : '#fff'} 
+                  d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+                />
+              </Svg>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <View style={styles.switchContainer}>
+              <Text style={styles.switchLabel}>Ulubione</Text>
+              <Switch value={favoritesOnly} onValueChange={toggleFavoriteSwitch} trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+                      thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
+                      ios_backgroundColor="#E5E5EA"
+                      style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
+                      />
+            </View>
+            <View style={styles.switchContainer}>
+              <Text style={styles.switchLabel}>Presety</Text>
+              <Switch
+                value={presetsSwitch}
+                onValueChange={(v) => {
+                  setPresetsSwitch(v);
+                  if (v) nav.navigate('PresetList');
+                }}
+                trackColor={{ false: '#E5E5EA', true: '#1E40AF' }}
+                thumbColor={Platform.OS === 'android' ? '#FFFFFF' : undefined}
+                ios_backgroundColor="#E5E5EA"
+                style={Platform.OS === 'android'? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : { transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
+              />
+            </View>
+            <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>
+              <Svg width={28} height={28} viewBox="0 0 24 24" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <Path 
+                  stroke={theme === 'light' ? '#000' : '#fff'} 
+                  d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+                />
+              </Svg>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       {songCount === 0 && (
@@ -227,6 +290,10 @@ const lightStyles = (isTablet: boolean) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  switchesLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -236,6 +303,18 @@ const lightStyles = (isTablet: boolean) => StyleSheet.create({
     fontSize: isTablet? 20:16,
     marginRight: 10,
     color: '#000000',
+  },
+  presetsButton: {
+    marginLeft: 12,
+    paddingVertical: isTablet ? 10 : 8,
+    paddingHorizontal: isTablet ? 14 : 12,
+    backgroundColor: '#1E40AF',
+    borderRadius: 999,
+  },
+  presetsButtonText: {
+    color: '#ffffff',
+    fontSize: isTablet ? 18 : 14,
+    fontWeight: '600',
   },
   searchButton: {
     width: isTablet ? 50 : 40,
@@ -276,6 +355,14 @@ const darkStyles = (isTablet: boolean) => StyleSheet.create({
   },
   switchLabel: {
     ...lightStyles(isTablet).switchLabel,
+    color: '#ffffff',
+  },
+  presetsButton: {
+    ...lightStyles(isTablet).presetsButton,
+    backgroundColor: '#1E3A8A',
+  },
+  presetsButtonText: {
+    ...lightStyles(isTablet).presetsButtonText,
     color: '#ffffff',
   },
   button: {

@@ -23,7 +23,7 @@ const AutoScroll: React.FC<AutoScrollProps> = ({ onStart, onStop }) => {
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
   return (

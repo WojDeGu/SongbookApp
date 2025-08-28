@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import env from './env.js';
@@ -7,7 +7,7 @@ const API_URL = env.API_URL;
 const LOCAL_STORAGE_KEY = 'songbook.json';
 
 const SongListChecker: React.FC = () => {
-  const [isChecking, setIsChecking] = useState<boolean>(true);
+  const isChecking = useRef<boolean>(true);
 
   useEffect(() => {
     const checkForUpdates = async () => {
@@ -43,7 +43,7 @@ const SongListChecker: React.FC = () => {
       } catch (error) {
         console.error('Błąd sprawdzania aktualizacji piosenek:', error);
       } finally {
-        setIsChecking(false);
+        isChecking.current = false;
       }
     };
 

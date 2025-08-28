@@ -2,6 +2,10 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './HomeScreen';
+import PresetListScreen from './PresetListScreen';
+import PresetEditorScreen from './PresetEditorScreen';
+import SongPickerScreen from './SongPickerScreen';
+import PresetDetailScreen from './PresetDetailScreen';
 import SongDetail from './SongDetail';
 import SettingsScreen from './SettingsScreen';
 import { ThemeProvider, useTheme } from './ThemeContext';
@@ -15,6 +19,10 @@ export type RootStackParamList = {
   HomeScreen: undefined;
   SettingsScreen: undefined;
   SongDetail: { songId: number };
+  PresetList: undefined;
+  PresetEditor: { id: string; pickedSong?: number; slot?: import('./PresetTypes').MassSlot };
+  SongPicker: { presetId: string; slot: import('./PresetTypes').MassSlot };
+  PresetDetail: { id: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -45,6 +53,8 @@ const AppNavigator: React.FC = () => {
       backgroundColor: theme === 'light' ? '#ffffff' : '#121212',
     },
     headerTintColor: iconColor,
+  headerBackTitle: 'Cofnij',
+  headerBackTitleVisible: true,
     headerTitleStyle: {
       fontWeight: 'bold',
     },
@@ -60,6 +70,10 @@ const AppNavigator: React.FC = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Strona główna' }} />
       <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Ustawienia' }} />
       <Stack.Screen name="SongDetail" component={SongDetail} options={{ title: 'Piosenka' }} />
+  <Stack.Screen name="PresetList" component={PresetListScreen} options={{ title: 'Presety Mszy' }} />
+  <Stack.Screen name="PresetEditor" component={PresetEditorScreen} options={{ title: 'Edytuj preset' }} />
+  <Stack.Screen name="SongPicker" component={SongPickerScreen} options={{ title: 'Wybierz piosenkę' }} />
+  <Stack.Screen name="PresetDetail" component={PresetDetailScreen} options={{ title: 'Podgląd presetu' }} />
     </Stack.Navigator>
   );
 };
