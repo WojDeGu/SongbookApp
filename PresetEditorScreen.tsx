@@ -42,7 +42,6 @@ const PresetEditorScreen: React.FC = () => {
     })();
   }, [id]);
 
-  // Reload latest preset on focus (covers updates made in SongPicker)
   useFocusEffect(
     React.useCallback(() => {
       (async () => {
@@ -53,7 +52,6 @@ const PresetEditorScreen: React.FC = () => {
     }, [id])
   );
 
-  // apply picked song when returned via params (legacy path)
   useEffect(() => {
     (async () => {
       const params = route.params as RouteParams;
@@ -66,7 +64,6 @@ const PresetEditorScreen: React.FC = () => {
         nav.setParams({ pickedSong: undefined, slot: undefined });
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params]);
 
   const pickSong = (s: MassSlot) => {
@@ -75,7 +72,6 @@ const PresetEditorScreen: React.FC = () => {
 
   const save = async () => {
     await upsertPreset(preset);
-    // Pop back to the existing PresetList to avoid stacking and back-loop
     if (nav.canGoBack()) {
       nav.goBack();
     } else {
@@ -84,8 +80,6 @@ const PresetEditorScreen: React.FC = () => {
   };
 
   const slots: MassSlot[] = ['wejscie', 'dary', 'komunia', 'uwielbienie', 'wyjscie'];
-
-  // Use default header/hardware back (pop). Avoid pushing new PresetList.
 
   return (
     <ScrollView style={styles.page} contentContainerStyle={styles.container}>

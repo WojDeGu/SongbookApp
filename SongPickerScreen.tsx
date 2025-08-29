@@ -30,7 +30,6 @@ const SongPickerScreen: React.FC = () => {
   }, []);
 
   const select = async (songId: number) => {
-    // Persist directly in storage and go back
     const list = await getPresets();
     const existing = list.find(p => p.id === presetId);
     const updated = existing

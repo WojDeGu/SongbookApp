@@ -4,7 +4,7 @@ import { useNavigation, useFocusEffect, CommonActions } from '@react-navigation/
 import { Preset } from './PresetTypes';
 import { useTheme } from './ThemeContext';
 import { getPresets } from './presetStorage';
-// lightweight id generator to avoid external deps
+
 const genId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
 const PresetListScreen: React.FC = () => {
@@ -33,8 +33,6 @@ const PresetListScreen: React.FC = () => {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
-
-  // actions przeniesione do karty podglądu
 
   return (
     <View style={styles.container}>
