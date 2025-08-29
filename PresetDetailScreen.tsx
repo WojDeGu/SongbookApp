@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, useWindowDimensions } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MassSlot, Preset } from './PresetTypes';
 import { getPresets, deletePreset } from './presetStorage';
@@ -14,6 +14,9 @@ const SLOT_LABELS: Record<MassSlot, string> = {
   komunia: 'Komunia',
   uwielbienie: 'Uwielbienie',
   wyjscie: 'Wyjście',
+  inne1: 'Inne 1',
+  inne2: 'Inne 2',
+  inne3: 'Inne 3',
 };
 
 type Song = { id: number; name: string; category?: string };
@@ -29,16 +32,23 @@ const PresetDetailScreen: React.FC = () => {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 
-  useEffect(() => {
-    (async () => {
-      const [all, stored] = await Promise.all([
-        getPresets(),
-        AsyncStorage.getItem('songbook.json'),
-      ]);
-      setPreset(all.find(p => p.id === id) || null);
-      setSongs(stored ? JSON.parse(stored) : []);
-    })();
+  const load = React.useCallback(async () => {
+    const [all, stored] = await Promise.all([
+      getPresets(),
+      AsyncStorage.getItem('songbook.json'),
+    ]);
+    setPreset(all.find(p => p.id === id) || null);
+    setSongs(stored ? JSON.parse(stored) : []);
   }, [id]);
+
+  useEffect(() => { load(); }, [load]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      load();
+      return () => {};
+    }, [load])
+  );
 
   const songMap = useMemo(() => {
     const map: Record<number, Song> = {};
@@ -46,7 +56,13 @@ const PresetDetailScreen: React.FC = () => {
     return map;
   }, [songs]);
 
-  const slots: MassSlot[] = ['wejscie', 'dary', 'komunia', 'uwielbienie', 'wyjscie'];
+  const slotsBase: MassSlot[] = ['wejscie', 'dary', 'komunia', 'uwielbienie', 'wyjscie'];
+  const inneSlots: MassSlot[] = ['inne1', 'inne2', 'inne3'];
+  const slots: MassSlot[] = useMemo(() => {
+    // Always show the base five; for Inne show only those that are assigned
+    const assignedInne = inneSlots.filter(s => !!preset?.songs?.[s]);
+    return assignedInne.length ? [...slotsBase, ...assignedInne] : slotsBase;
+  }, [preset?.songs]);
 
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
@@ -64,11 +80,13 @@ const PresetDetailScreen: React.FC = () => {
               return (
                 <RowComponent key={s} style={styles.row} onPress={onPress} activeOpacity={0.7} accessibilityRole={song ? 'button' : undefined}>
                   <Text style={styles.slotLabel}>{SLOT_LABELS[s]}</Text>
-                  {song ? (
-                    <Text style={styles.songName}>{song.name}</Text>
-                  ) : (
-                    <Text style={styles.missing}>Brak piosenki</Text>
-                  )}
+                  <View style={styles.valueWrap}>
+                    {song ? (
+                      <Text style={styles.songName} numberOfLines={1} ellipsizeMode="tail">{song.name}</Text>
+                    ) : (
+                      <Text style={styles.missing} numberOfLines={1} ellipsizeMode="tail">Brak piosenki</Text>
+                    )}
+                  </View>
                 </RowComponent>
               );
             })}
@@ -115,7 +133,8 @@ const base = {
   buttonText: { color: '#ffffff', fontWeight: '700' as '700' },
   row: { flexDirection: 'row' as 'row', alignItems: 'center' as 'center', justifyContent: 'space-between' as 'space-between', paddingVertical: 12, borderBottomWidth: 1 },
   slotLabel: { fontWeight: '700' as '700', fontSize: 16 },
-  songName: { fontWeight: '600' as '600', fontSize: 16 },
+  valueWrap: { flex: 1, alignItems: 'flex-end' as 'flex-end', marginLeft: 12 },
+  songName: { fontWeight: '600' as '600', fontSize: 16, textAlign: 'right' as 'right' },
   missing: {},
 };
 
@@ -130,6 +149,7 @@ const lightStyles = (isTablet: boolean) => StyleSheet.create({
   buttonText: { ...base.buttonText, fontSize: isTablet ? 18 : 16 },
   row: { ...base.row, borderBottomColor: '#eee', paddingVertical: isTablet ? 16 : 12},
   slotLabel: { ...base.slotLabel, color: '#111', fontSize: isTablet ? 20 : 16 },
+  valueWrap: { ...base.valueWrap },
   songName: { ...base.songName, color: '#1e40af', fontSize: isTablet ? 18 : 16 },
   missing: { color: '#999', fontSize: isTablet ? 18 : 16 },
 });
@@ -145,6 +165,7 @@ const darkStyles = (isTablet: boolean) => StyleSheet.create({
   buttonText: { ...base.buttonText, fontSize: isTablet ? 18 : 16 },
   row: { ...base.row, borderBottomColor: '#333', paddingVertical: isTablet ? 16 : 12,},
   slotLabel: { ...base.slotLabel, color: '#ffffff', fontSize: isTablet ? 20 : 16 },
+  valueWrap: { ...base.valueWrap },
   songName: { ...base.songName, color: '#93c5fd', fontSize: isTablet ? 18 : 16 },
   missing: { color: '#888', fontSize: isTablet ? 18 : 16 },
 });

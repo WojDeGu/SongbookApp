@@ -70,7 +70,7 @@ const AppNavigator: React.FC = () => {
   <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Strona główna' }} />
   <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Ustawienia' }} />
   <Stack.Screen name="SongDetail" component={SongDetail} options={{ title: 'Piosenka' }} />
-  <Stack.Screen name="PresetList" component={PresetListScreen} options={{ title: 'Presety Mszy Świętych' }} />
+  <Stack.Screen name="PresetList" component={PresetListScreen} options={{ title: 'Presety do Mszy Świętych' }} />
   <Stack.Screen name="PresetEditor" component={PresetEditorScreen} options={{ title: 'Edytuj preset' }} />
   <Stack.Screen name="SongPicker" component={SongPickerScreen} options={{ title: 'Wybierz piosenkę' }} />
   <Stack.Screen name="PresetDetail" component={PresetDetailScreen} options={{ title: 'Podgląd presetu' }} />
