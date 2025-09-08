@@ -59,7 +59,6 @@ const PresetDetailScreen: React.FC = () => {
   const slotsBase: MassSlot[] = ['wejscie', 'dary', 'komunia', 'uwielbienie', 'wyjscie'];
   const inneSlots: MassSlot[] = ['inne1', 'inne2', 'inne3'];
   const slots: MassSlot[] = useMemo(() => {
-    // Always show the base five; for Inne show only those that are assigned
     const assignedInne = inneSlots.filter(s => !!preset?.songs?.[s]);
     return assignedInne.length ? [...slotsBase, ...assignedInne] : slotsBase;
   }, [preset?.songs]);

@@ -51,7 +51,6 @@ const HomeScreen: React.FC = () => {
     }
   }, []);
 
-  // reset Presety switch when returning to Home
   useFocusEffect(
     React.useCallback(() => {
       setPresetsSwitch(false);

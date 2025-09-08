@@ -73,7 +73,6 @@ const PresetEditorScreen: React.FC = () => {
     nav.navigate('SongPicker', { presetId: id, slot: s });
   };
 
-  // Optional "Inne" slots handling
   const inneSlots: MassSlot[] = ['inne1', 'inne2', 'inne3'] as any;
   const baseSlots: MassSlot[] = ['wejscie', 'dary', 'komunia', 'uwielbienie', 'wyjscie'];
   const inneAssigned = useMemo(() => inneSlots.filter(s => !!preset.songs[s]), [preset.songs]);

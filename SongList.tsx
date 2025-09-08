@@ -36,7 +36,6 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp>();
-  // local cache not used directly; kept minimal
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 

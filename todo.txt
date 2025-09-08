@@ -3,4 +3,4 @@
 [x]  Poprawić SongDetail, zeby tylko treść mozna było przesuwać
 []  Przypinalny refren // chyba nierealne, ale taka była propozycja
 [x]  Responzywność dla tabletów
-[]  Zakładka z listami piosenek na msze. Karta: nazwa, 5 nagłówków(wejście, ofiarowanie, komunia, uwielbienie, wyjście), do kazdego mozna dodać piosenki. Kartę mozna usunąć lub edytować po wejściu w nią
+[x]  Zakładka z listami piosenek na msze. Karta: nazwa, 5 nagłówków(wejście, ofiarowanie, komunia, uwielbienie, wyjście), do kazdego mozna dodać piosenki. Kartę mozna usunąć lub edytować po wejściu w nią

@@ -13,7 +13,7 @@ const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: (
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Najnowsze zmiany</Text>
           <Text style={styles.changelogText}>
-            - Nowa kategoria{'\n'}
+            - Dodano presety mszy (w ustawieniach){'\n'}
             - Poprawki błędów{'\n'}
             - Dodano nowe piosenki - Zaktualizuj listę w ustawieniach
           </Text>
