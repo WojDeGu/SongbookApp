@@ -35,6 +35,8 @@
 	<string></string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Ta aplikacja wykorzystuje dane do personalizacji reklam.</string>
+	<key>RCTNewArchEnabled</key>
+	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/Ionicons.ttf</string>

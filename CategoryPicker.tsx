@@ -13,7 +13,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ selectedCategory, onSel
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
-  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Salezjańskie', 'Wielkanoc', 'Wielki Post', 'Adwent'];
+  const categories = ['Inne', 'Msza', 'Uwielbienie', 'Maryjne', 'Do Ducha Świętego', 'Salezjańskie', 'Wielkanoc', 'Wielki Post', 'Adwent', 'Kolędy'];
 
   const categoryStyles: Record<
     string,

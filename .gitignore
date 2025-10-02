@@ -79,3 +79,4 @@ android/keystore.properties
 env.js
 todo.txt
 assets/src
+.kotlin/

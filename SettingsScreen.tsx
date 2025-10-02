@@ -123,6 +123,11 @@ const SettingsScreen: React.FC = () => {
       console.error("Nie można otworzyć linku:", err)
     );
   };
+  const openBuyCoffee = () => {
+    Linking.openURL('https://buycoffee.to/slowkodaje').catch(err => 
+      console.error("Nie można otworzyć linku:", err)
+    );
+  };
 
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
@@ -160,6 +165,9 @@ const SettingsScreen: React.FC = () => {
       </View>
 
       <View style={styles.bottomButtonsContainer}>
+        <TouchableOpacity style={styles.buttonBlue} onPress={openBuyCoffee}>
+          <Text style={styles.buttonText}>Wsparcie aplikacji</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.buttonBlue} onPress={showModal}>
           <Text style={styles.buttonText}>Pokaż najnowsze zmiany</Text>
         </TouchableOpacity>

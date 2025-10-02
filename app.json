@@ -1,4 +1,7 @@
 {
   "name": "spiewnikreligijnyapp",
-  "displayName": "Śpiewnik + Religijny"
+  "displayName": "Śpiewnik + Religijny",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-3054958321666076~8110851931"
+  }
 }

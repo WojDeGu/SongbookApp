@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, DeviceEventEmitter, useWindowDimensions } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { runOnJS, useSharedValue } from 'react-native-reanimated';
 import { RouteProp } from '@react-navigation/native';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -64,21 +63,17 @@ const FontSizeAdjuster = ({ fontSize, setFontSize }: { fontSize: number; setFont
 
 // Komponent do obsługi gestami
 const usePinchToZoom = (fontSize: number, setFontSize: (size: number) => void) => {
-  const baseFontSize = useSharedValue(fontSize);
-
-  const handlePinch = (scale: number) => {
-    'worklet';
-    baseFontSize.value = Math.max(10, Math.min(fontSize * scale, 50));
-    runOnJS(setFontSize)(baseFontSize.value);
-  };
-
+  // Pure JS pinch-to-zoom using gesture-handler
+  let lastScale = 1;
   return Gesture.Pinch()
     .onBegin(() => {
-      'worklet';
-      baseFontSize.value = fontSize;
+      lastScale = 1;
     })
     .onUpdate((event) => {
-      handlePinch(event.scale);
+      const scale = event.scale;
+      const newFontSize = Math.max(10, Math.min(fontSize * scale, 50));
+      setFontSize(newFontSize);
+      lastScale = scale;
     });
 };
 
@@ -105,7 +100,7 @@ const TransposeAdjuster = ({ transpose, setTranspose }: { transpose: number; set
   );
 };
 
-const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
+const SongDetail: React.FC<SongDetailProps> = ({ route }: SongDetailProps) => {
   const { songId } = route.params;
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
@@ -271,27 +266,27 @@ const SongDetail: React.FC<SongDetailProps> = ({ route }) => {
           style={{ backgroundColor: theme === 'dark' ? '#121212' : '#ffffff', flex: 1 }}
           ref={listRef}
           data={songDetail?.content || []}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(_item: { lyrics: string; chords?: string }, index: number) => index.toString()}
           renderItem={() => null}
           ListFooterComponent={<View>{renderSongContent(songDetail?.content || [])}</View>}
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps="handled"
-          onScroll={(event) => {
+          onScroll={(event: any) => {
             scrollOffset.current = event.nativeEvent.contentOffset.y;
             if (scrollOffset.current + containerHeight.current >= contentHeight.current) {
               handleAutoScrollStop();
             }
           }}
-          onLayout={(event) => {
+          onLayout={(event: any) => {
             containerHeight.current = event.nativeEvent.layout.height;
           }}
-          onContentSizeChange={(_, height) => {
+          onContentSizeChange={(_: any, height: number) => {
             contentHeight.current = height;
           }}
           scrollEventThrottle={16}
         />
       </View>
-    </GestureDetector>
+  </GestureDetector>
   );
 };
 
