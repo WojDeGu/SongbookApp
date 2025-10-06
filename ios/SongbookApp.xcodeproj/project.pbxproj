@@ -14,12 +14,26 @@
 		F1BC09897B453BFB8EAA13B7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		67DAF0C32E90649000C3286A /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* SongbookApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SongbookApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SongbookApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SongbookApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = SongbookApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3EC19310E19AB281502F1942 /* Pods-SongbookApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongbookApp.release.xcconfig"; path = "Target Support Files/Pods-SongbookApp/Pods-SongbookApp.release.xcconfig"; sourceTree = "<group>"; };
+		67DAF0C82E90652200C3286A /* SongbookApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SongbookApp.entitlements; path = SongbookApp/SongbookApp.entitlements; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SongbookApp/AppDelegate.swift; sourceTree = "<group>"; };
 		7D3095AFD236151533309C33 /* libPods-SongbookApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SongbookApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SongbookApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -42,6 +56,7 @@
 		13B07FAE1A68108700A75B9A /* SongbookApp */ = {
 			isa = PBXGroup;
 			children = (
+				67DAF0C82E90652200C3286A /* SongbookApp.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -112,6 +127,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				15263A848AB16A76CEDF42F5 /* [CP] Embed Pods Frameworks */,
 				AE323E93672D3B00E565EC0E /* [CP] Copy Pods Resources */,
+				67DAF0C32E90649000C3286A /* Embed Foundation Extensions */,
 				555C19AA3C4ADBBDD72DCF41 /* [CP-User] [RNGoogleMobileAds] Configuration */,
 			);
 			buildRules = (
@@ -130,6 +146,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
@@ -285,7 +302,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 19;
+				CODE_SIGN_ENTITLEMENTS = SongbookApp/SongbookApp.entitlements;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = V77PSV7C4V;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = SongbookApp/Info.plist;
@@ -296,7 +314,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.2;
+				MARKETING_VERSION = 1.5.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -322,7 +340,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 19;
+				CODE_SIGN_ENTITLEMENTS = SongbookApp/SongbookApp.entitlements;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = V77PSV7C4V;
 				INFOPLIST_FILE = SongbookApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Śpiewnik + Religijny";
@@ -332,7 +351,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.2;
+				MARKETING_VERSION = 1.5.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

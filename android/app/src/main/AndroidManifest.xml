@@ -6,8 +6,8 @@
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
-  android:icon="@mipmap/ic_launcher"
-  android:roundIcon="@mipmap/ic_launcher"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher"
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
@@ -22,6 +22,31 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+    <!-- Handle opening .sbpreset files shared from other apps -->
+    <!-- Preferred: when sender sets the custom mime type -->
+    <intent-filter>
+      <action android:name="android.intent.action.VIEW" />
+      <category android:name="android.intent.category.DEFAULT" />
+      <category android:name="android.intent.category.BROWSABLE" />
+      <data android:scheme="content" android:mimeType="application/x-songbook-preset" android:pathPattern=".*\\.sbpreset" />
+      <data android:scheme="file" android:mimeType="application/x-songbook-preset" android:pathPattern=".*\\.sbpreset" />
+    </intent-filter>
+
+    <!-- Fallback: some apps send generic mime types. Match by extension for content:// -->
+    <intent-filter>
+      <action android:name="android.intent.action.VIEW" />
+      <category android:name="android.intent.category.DEFAULT" />
+      <category android:name="android.intent.category.BROWSABLE" />
+      <data android:scheme="content" android:mimeType="*/*" android:pathPattern=".*\\.sbpreset" />
+    </intent-filter>
+
+    <!-- Fallback: match file:// URIs by extension when mime is generic -->
+    <intent-filter>
+      <action android:name="android.intent.action.VIEW" />
+      <category android:name="android.intent.category.DEFAULT" />
+      <category android:name="android.intent.category.BROWSABLE" />
+      <data android:scheme="file" android:mimeType="*/*" android:pathPattern=".*\\.sbpreset" />
+    </intent-filter>
       </activity>
       <meta-data
       android:name="com.google.android.gms.ads.APPLICATION_ID"

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, BackHandler, useWindowDimensions } from 'react-native';
 import { useNavigation, useFocusEffect, CommonActions } from '@react-navigation/native';
+import { DeviceEventEmitter } from 'react-native';
 import { Preset } from './PresetTypes';
 import { useTheme } from './ThemeContext';
 import { getPresets } from './presetStorage';
@@ -16,6 +17,7 @@ const PresetListScreen: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       load();
+      const sub = DeviceEventEmitter.addListener('presetsUpdated', () => load());
       const onHardwareBack = () => {
         if (nav.canGoBack()) {
           nav.goBack();
@@ -25,7 +27,7 @@ const PresetListScreen: React.FC = () => {
         return true;
       };
       const backSub = BackHandler.addEventListener('hardwareBackPress', onHardwareBack);
-      return () => { backSub.remove(); };
+      return () => { backSub.remove(); sub.remove(); };
     }, [nav])
   );
 

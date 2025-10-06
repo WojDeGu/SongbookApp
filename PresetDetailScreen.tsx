@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, useWindowD
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MassSlot, Preset } from './PresetTypes';
-import { getPresets, deletePreset } from './presetStorage';
+import { getPresets, deletePreset, exportPreset } from './presetStorage';
+import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
 import { useTheme } from './ThemeContext';
 
 type RouteParams = { id: string };
@@ -94,6 +96,35 @@ const PresetDetailScreen: React.FC = () => {
       </ScrollView>
       {preset && (
         <View style={styles.bottomButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.buttonBlue, { backgroundColor: '#10b981' }]}
+            onPress={async () => {
+                try {
+                  const exported = exportPreset(preset);
+                  const content = JSON.stringify(exported);
+                  // sanitize preset name for filename
+                  const safeName = (preset.name || 'preset').replace(/[^a-z0-9-_\.]/gi, '_').substring(0, 60);
+                  const fileName = `preset-${safeName || preset.id}.sbpreset`;
+                  const path = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
+                  await RNFS.writeFile(path, content, 'utf8');
+                  try {
+                    await Share.open({ url: 'file://' + path, filename: fileName, title: 'Udostępnij preset' });
+                  } catch (shareErr: any) {
+                    // react-native-share throws when user cancels; treat cancellation as non-fatal
+                    const msg = String(shareErr?.message || shareErr);
+                    console.warn('Share result:', msg);
+                    if (!msg.includes('User did not share') && !msg.includes('CANCELED') && !msg.includes('cancelled')) {
+                      throw shareErr;
+                    }
+                  }
+                } catch (e) {
+                  Alert.alert('Błąd', 'Nie udało się wyeksportować presetu.');
+                  console.error(e);
+                }
+              }}
+          >
+            <Text style={styles.buttonText}>Udostępnij</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.buttonBlue} onPress={() => nav.navigate('PresetEditor', { id })}>
             <Text style={styles.buttonText}>Edytuj</Text>
           </TouchableOpacity>

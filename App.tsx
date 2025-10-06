@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { TouchableOpacity, Alert, DeviceEventEmitter, Linking } from 'react-native';
+import RNFS from 'react-native-fs';
+import Orientation from 'react-native-orientation-locker';
+import { Svg, Path } from 'react-native-svg';
+
 import HomeScreen from './HomeScreen';
 import PresetListScreen from './PresetListScreen';
 import PresetEditorScreen from './PresetEditorScreen';
@@ -8,12 +13,9 @@ import SongPickerScreen from './SongPickerScreen';
 import PresetDetailScreen from './PresetDetailScreen';
 import SongDetail from './SongDetail';
 import SettingsScreen from './SettingsScreen';
-import { ThemeProvider, useTheme } from './ThemeContext';
-import { TouchableOpacity } from 'react-native';
-import { Svg, Path } from 'react-native-svg';
 import SongListChecker from './SongListChecker';
-import { useEffect } from 'react';
-import Orientation from 'react-native-orientation-locker';
+import { ThemeProvider, useTheme } from './ThemeContext';
+import { importPresetFile } from './presetStorage';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -45,36 +47,40 @@ const AppNavigator: React.FC = () => {
   const { theme } = useTheme();
   const iconColor = theme === 'light' ? '#121212' : '#ffffff';
   
-
   return (
     <Stack.Navigator
-  screenOptions={({ navigation, route }) => ({
-    headerStyle: {
-      backgroundColor: theme === 'light' ? '#ffffff' : '#121212',
-    },
-    headerTintColor: iconColor,
-  headerBackTitle: 'Cofnij',
-  headerBackTitleVisible: true,
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-    headerTitleAlign: 'center',
-    headerRight: () =>
-      route.name !== 'SettingsScreen' ? ( // Ukrywa headerRight na SettingsScreen <ChangelogModal isVisible={isVisible} onClose={hideModal} />
-        <TouchableOpacity style={{ marginRight: 15 }}onPress={() => navigation.navigate('SettingsScreen')}>
-          <SettingsIcon size={28} color={theme === 'light' ? '#304052' : 'white'} secondcolor={theme === 'dark' ? '#304052' : 'white'}/>
-        </TouchableOpacity>
-      ) : null,
-  })}
->
-  <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Strona główna' }} />
-  <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Ustawienia' }} />
-  <Stack.Screen name="SongDetail" component={SongDetail} options={{ title: 'Piosenka' }} />
-  <Stack.Screen name="PresetList" component={PresetListScreen} options={{ title: 'Presety do Mszy Świętych' }} />
-  <Stack.Screen name="PresetEditor" component={PresetEditorScreen} options={{ title: 'Edytuj preset' }} />
-  <Stack.Screen name="SongPicker" component={SongPickerScreen} options={{ title: 'Wybierz piosenkę' }} />
-  <Stack.Screen name="PresetDetail" component={PresetDetailScreen} options={{ title: 'Podgląd presetu' }} />
-  </Stack.Navigator>
+      screenOptions={({ navigation, route }) => ({
+        headerStyle: {
+          backgroundColor: theme === 'light' ? '#ffffff' : '#121212',
+        },
+        headerTintColor: iconColor,
+        headerBackTitle: 'Cofnij',
+        headerBackTitleVisible: true,
+        headerTitleStyle: { fontWeight: 'bold' },
+        headerTitleAlign: 'center',
+        headerRight: () =>
+          route.name !== 'SettingsScreen' ? (
+            <TouchableOpacity
+              style={{ marginRight: 15 }}
+              onPress={() => navigation.navigate('SettingsScreen')}
+            >
+              <SettingsIcon
+                size={28}
+                color={theme === 'light' ? '#304052' : 'white'}
+                secondcolor={theme === 'dark' ? '#304052' : 'white'}
+              />
+            </TouchableOpacity>
+          ) : null,
+      })}
+    >
+      <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Strona główna' }} />
+      <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Ustawienia' }} />
+      <Stack.Screen name="SongDetail" component={SongDetail} options={{ title: 'Piosenka' }} />
+      <Stack.Screen name="PresetList" component={PresetListScreen} options={{ title: 'Presety do Mszy Świętych' }} />
+      <Stack.Screen name="PresetEditor" component={PresetEditorScreen} options={{ title: 'Edytuj preset' }} />
+      <Stack.Screen name="SongPicker" component={SongPickerScreen} options={{ title: 'Wybierz piosenkę' }} />
+      <Stack.Screen name="PresetDetail" component={PresetDetailScreen} options={{ title: 'Podgląd presetu' }} />
+    </Stack.Navigator>
   );
 };
 
@@ -82,6 +88,86 @@ const App: React.FC = () => {
   useEffect(() => {
     Orientation.lockToPortrait();
   }, []);
+
+  useEffect(() => {
+    const handleUrl = async (url: string | null) => {
+      if (!url) return;
+      try {
+        if (url.startsWith('spiewnik://')) {
+          try {
+            const qIndex = url.indexOf('?');
+            const query = qIndex >= 0 ? url.slice(qIndex + 1) : '';
+            const params = query.split('&').reduce<Record<string,string>>((acc, part) => {
+              const [k, v] = part.split('=');
+              if (k) acc[decodeURIComponent(k)] = v ? decodeURIComponent(v) : '';
+              return acc;
+            }, {});
+            const fileUrl = params['url'];
+            if (fileUrl && (fileUrl.startsWith('http://') || fileUrl.startsWith('https://'))) {
+              const res = await fetch(fileUrl);
+              if (!res.ok) throw new Error(`Failed to fetch preset: ${res.status}`);
+              const text = await res.text();
+              const obj = JSON.parse(text);
+              await importPresetFile(obj);
+              DeviceEventEmitter.emit('presetsUpdated');
+              Alert.alert('Importowano preset', `Preset został zaimportowany.`);
+              return;
+            } else if (fileUrl && fileUrl.startsWith('file://')) {
+              url = decodeURIComponent(fileUrl);
+            }
+          } catch (err) {
+            console.error('spiewnik:// import failed', err);
+            Alert.alert('Błąd importu', String(err));
+            return;
+          }
+        }
+
+
+        if (url.startsWith('content://')) {
+          try {
+            const dest = `${RNFS.TemporaryDirectoryPath}/imported.sbpreset`;
+            await RNFS.copyFile(url, dest);
+            const content = await RNFS.readFile(dest, 'utf8');
+            const obj = JSON.parse(content);
+            const id = await importPresetFile(obj);
+            DeviceEventEmitter.emit('presetsUpdated');
+            Alert.alert('Importowano preset', `Preset został zaimportowany.`);
+            return;
+          } catch (copyErr) {
+            console.warn('copy content:// failed', copyErr);
+          }
+        }
+
+        if (url.startsWith('file://') || url.endsWith('.sbpreset')) {
+          const decoded = decodeURIComponent(url);
+          const path = decoded.replace('file://', '');
+          console.log('reading file path:', path);
+          const content = await RNFS.readFile(path, 'utf8');
+          const obj = JSON.parse(content);
+          const id = await importPresetFile(obj);
+          DeviceEventEmitter.emit('presetsUpdated');
+          Alert.alert('Importowano preset', `Preset został zaimportowany.`);
+        }
+      } catch (e) {
+        console.error('Import failed', e);
+        Alert.alert('Błąd importu', String(e));
+      }
+    };
+
+    Linking.getInitialURL().then(handleUrl).catch(console.error);
+    const sub = Linking.addEventListener('url', e => handleUrl(e.url));
+    const nativeSub = DeviceEventEmitter.addListener('RNFileOpener_fileOpened', (ev: any) => {
+      if (ev && ev.path) {
+        handleUrl(`file://${ev.path}`);
+      }
+    });
+
+    return () => {
+      sub.remove();
+      nativeSub.remove();
+    };
+  }, []);
+
   return (
     <ThemeProvider>
       <SongListChecker />

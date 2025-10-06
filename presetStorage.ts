@@ -23,3 +23,28 @@ export async function deletePreset(id: string) {
   const list = await getPresets();
   await savePresets(list.filter(p => p.id !== id));
 }
+
+// Export a single preset as an object suitable for writing to a file.
+export function exportPreset(preset: Preset) {
+  // include a small magic header and version so the app can recognise the file
+  return {
+    __preset_file: true,
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    meta: {
+      id: preset.id,
+      name: preset.name,
+      date: preset.date,
+      notes: preset.notes,
+    },
+    payload: preset,
+  };
+}
+
+// Import preset object (parsed JSON) into storage; returns the upserted preset id
+export async function importPresetFile(obj: any) {
+  if (!obj || obj.__preset_file !== true) throw new Error('Invalid preset file');
+  const preset: Preset = obj.payload;
+  await upsertPreset(preset);
+  return preset.id;
+}

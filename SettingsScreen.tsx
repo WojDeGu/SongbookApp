@@ -203,6 +203,7 @@ const lightStyles = (isTablet: boolean) => StyleSheet.create({
     fontSize: isTablet ? 28:24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#000000',
   },
   switchContainer: {
     flexDirection: 'row',
@@ -212,6 +213,7 @@ const lightStyles = (isTablet: boolean) => StyleSheet.create({
   switchLabel: {
     fontSize: isTablet? 24:18,
     marginRight: 10,
+    color: '#000000',
   },
   buttonBlue:{
     backgroundColor: '#007bff',
