@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -14,6 +14,7 @@ const SongPickerScreen: React.FC = () => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [filteredSongs, setFilteredSongs] = useState<Song[]>([]);
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const { presetId, slot } = route.params as { presetId: string; slot: MassSlot };
@@ -39,28 +40,25 @@ const SongPickerScreen: React.FC = () => {
     nav.goBack();
   };
 
-  const filtered = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    const norm = (t: string) => t.toLowerCase();
-    let list = songs;
-    if (selectedCategory) {
-      list = list.filter(s => s.category === selectedCategory);
-    }
-    if (!q) return list;
-    return list.filter(s =>
-      norm(s.name).includes(q) || (s.category && norm(s.category).includes(q))
-    );
-  }, [songs, searchQuery, selectedCategory]);
+  const getText = useCallback((it: Song) => it.name, []);
+  const onResultsCallback = useCallback((res: Song[]) => setFilteredSongs(res), [setFilteredSongs]);
 
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
   return (
     <View style={styles.container}> 
       <View style={styles.searchWrap}>
         <CategoryPicker selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
-        <SongSearch searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        <SongSearch
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          items={songs}
+          getText={getText}
+          category={selectedCategory}
+          onResults={onResultsCallback}
+        />
       </View>
       <FlatList
-        data={filtered}
+        data={filteredSongs}
         keyExtractor={i => i.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.row} onPress={() => select(item.id)}>

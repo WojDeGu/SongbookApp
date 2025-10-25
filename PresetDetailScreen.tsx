@@ -97,12 +97,11 @@ const PresetDetailScreen: React.FC = () => {
       {preset && (
         <View style={styles.bottomButtonsContainer}>
           <TouchableOpacity
-            style={[styles.buttonBlue, { backgroundColor: '#10b981' }]}
+            style={styles.buttonGreen}
             onPress={async () => {
                 try {
                   const exported = exportPreset(preset);
                   const content = JSON.stringify(exported);
-                  // sanitize preset name for filename
                   const safeName = (preset.name || 'preset').replace(/[^a-z0-9-_\.]/gi, '_').substring(0, 60);
                   const fileName = `preset-${safeName || preset.id}.sbpreset`;
                   const path = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
@@ -110,7 +109,6 @@ const PresetDetailScreen: React.FC = () => {
                   try {
                     await Share.open({ url: 'file://' + path, filename: fileName, title: 'Udostępnij preset' });
                   } catch (shareErr: any) {
-                    // react-native-share throws when user cancels; treat cancellation as non-fatal
                     const msg = String(shareErr?.message || shareErr);
                     console.warn('Share result:', msg);
                     if (!msg.includes('User did not share') && !msg.includes('CANCELED') && !msg.includes('cancelled')) {
@@ -159,6 +157,7 @@ const base = {
   info: {},
   bottomButtonsContainer: { position: 'absolute' as 'absolute', bottom: 10, left: 0, right: 0, padding: 15 },
   buttonBlue: { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 10, alignItems: 'center' as 'center', marginVertical: 8 },
+  buttonGreen: { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 10, alignItems: 'center' as 'center', marginVertical: 8 },
   buttonRed: { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 10, alignItems: 'center' as 'center', marginVertical: 8 },
   buttonText: { color: '#ffffff', fontWeight: '700' as '700' },
   row: { flexDirection: 'row' as 'row', alignItems: 'center' as 'center', justifyContent: 'space-between' as 'space-between', paddingVertical: 12, borderBottomWidth: 1 },
@@ -175,6 +174,7 @@ const lightStyles = (isTablet: boolean) => StyleSheet.create({
   info: { color: '#555' },
   bottomButtonsContainer: { ...base.bottomButtonsContainer, bottom: isTablet ? 20 : 10, padding: isTablet ? 20 : 15 },
   buttonBlue: { ...base.buttonBlue, backgroundColor: '#007bff', paddingVertical: isTablet ? 14 : 12 },
+  buttonGreen: { ...base.buttonGreen, backgroundColor: '#10B981', paddingVertical: isTablet ? 14 : 12 },
   buttonRed: { ...base.buttonRed, backgroundColor: '#ef4444', paddingVertical: isTablet ? 14 : 12 },
   buttonText: { ...base.buttonText, fontSize: isTablet ? 18 : 16 },
   row: { ...base.row, borderBottomColor: '#eee', paddingVertical: isTablet ? 16 : 12},
@@ -191,6 +191,7 @@ const darkStyles = (isTablet: boolean) => StyleSheet.create({
   info: { color: '#c7c7c7' },
   bottomButtonsContainer: { ...base.bottomButtonsContainer, bottom: isTablet ? 20 : 10, padding: isTablet ? 20 : 15 },
   buttonBlue: { ...base.buttonBlue, backgroundColor: '#1E40AF', paddingVertical: isTablet ? 14 : 12 },
+  buttonGreen: { ...base.buttonGreen, backgroundColor: '#059669', paddingVertical: isTablet ? 14 : 12 },
   buttonRed: { ...base.buttonRed, backgroundColor: '#b91c1c', paddingVertical: isTablet ? 14 : 12 },
   buttonText: { ...base.buttonText, fontSize: isTablet ? 18 : 16 },
   row: { ...base.row, borderBottomColor: '#333', paddingVertical: isTablet ? 16 : 12,},

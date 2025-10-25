@@ -42,6 +42,14 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
   const { theme } = useTheme();
   const styles = theme === 'light' ? lightStyles(isTablet) : darkStyles(isTablet);
 
+  const normalize = (text: string) =>
+    text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\p{L}\p{N}\s]/gu, '')
+      .trim();
+
   useEffect(() => {
     const loadSongs = async () => {
       try {
@@ -86,15 +94,20 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
       return false;
     }
 
-  if (searchQuery) {
-      const normalize = (text: string) => text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, '').replace(/\s{2,}/g, ' ').trim();
+    if (searchQuery) {
+      const q = normalize(searchQuery);
+      const tokens = q.split(/\s+/).filter(Boolean);
 
-      const normalizedQuery = normalize(searchQuery);
+      const matchesText = (text: string) => {
+        const n = normalize(text);
+        return tokens.every(t => n.includes(t));
+      };
 
-      const nameMatch = normalize(song.name).includes(normalizedQuery);
-      const categoryMatch = normalize(song.category || '').includes(normalizedQuery);
+      const nameMatch = matchesText(song.name);
+      const categoryMatch = matchesText(song.category || '');
       const lyricsMatch = Array.isArray(song.content) && song.content.some((line: SongLine) =>
-      typeof line.lyrics === 'string' && normalize(line.lyrics).includes(normalizedQuery));
+        typeof line.lyrics === 'string' && matchesText(line.lyrics)
+      );
 
       if (!nameMatch && !categoryMatch && !lyricsMatch) {
         return false;
