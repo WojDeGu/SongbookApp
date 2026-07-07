@@ -31,5 +31,17 @@ target 'SongbookApp' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Xcode 26.4+ (Apple Clang 21) enforces stricter consteval rules that the
+    # fmt version vendored by React Native doesn't satisfy. Build just the
+    # fmt pod as C++17 so it falls back to its runtime string validation.
+    # https://github.com/facebook/react-native/issues/55601
+    installer.pods_project.targets.each do |target|
+      if target.name == 'fmt'
+        target.build_configurations.each do |config|
+          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        end
+      end
+    end
   end
 end
