@@ -9,7 +9,7 @@ import AdBanner from './AdBanner';
 import { Svg, Path } from 'react-native-svg';
 import env from "./env.js";
 import {AdsConsent, AdsConsentStatus } from 'react-native-google-mobile-ads';
-import { requestTrackingPermission } from 'react-native-tracking-transparency';
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const API_URL = env.API_URL;
@@ -31,10 +31,10 @@ const HomeScreen: React.FC = () => {
 
   const requestATT = async () => {
     if (Platform.OS === 'ios') {
-      const status = await requestTrackingPermission();
+      const status = await request(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
       console.log('ATT Status:', status);
-      
-      if (status === 'not-determined') {
+
+      if (status === RESULTS.DENIED) {
         Alert.alert('Prośba o zgodę', 'Aplikacja prosi o zgodę na śledzenie.');
       }
     }
