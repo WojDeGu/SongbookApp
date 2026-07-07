@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { TouchableOpacity, Alert, DeviceEventEmitter, Linking } from 'react-native';
 import RNFS from 'react-native-fs';
-import Orientation from 'react-native-orientation-locker';
 import { Svg, Path } from 'react-native-svg';
 
 import HomeScreen from './HomeScreen';
@@ -85,10 +84,6 @@ const AppNavigator: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  useEffect(() => {
-    Orientation.lockToPortrait();
-  }, []);
-
   useEffect(() => {
     const handleUrl = async (url: string | null) => {
       if (!url) return;

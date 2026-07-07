@@ -22,7 +22,6 @@
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.23.1",
     "react-native-google-mobile-ads": "^7.0.0",
-    "react-native-orientation-locker": "^1.7.0",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "4.24.0",
     "react-native-share": "^8.2.0",
