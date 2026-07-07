@@ -4,7 +4,7 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MassSlot, Preset } from './PresetTypes';
 import { getPresets, deletePreset, exportPreset } from './presetStorage';
-import RNFS from 'react-native-fs';
+import { TemporaryDirectoryPath, writeFile } from '@dr.pogodin/react-native-fs';
 import Share from 'react-native-share';
 import { useTheme } from './ThemeContext';
 
@@ -104,8 +104,8 @@ const PresetDetailScreen: React.FC = () => {
                   const content = JSON.stringify(exported);
                   const safeName = (preset.name || 'preset').replace(/[^a-z0-9-_\.]/gi, '_').substring(0, 60);
                   const fileName = `preset-${safeName || preset.id}.sbpreset`;
-                  const path = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
-                  await RNFS.writeFile(path, content, 'utf8');
+                  const path = `${TemporaryDirectoryPath}/${fileName}`;
+                  await writeFile(path, content, 'utf8');
                   try {
                     await Share.open({ url: 'file://' + path, filename: fileName, title: 'Udostępnij preset' });
                   } catch (shareErr: any) {

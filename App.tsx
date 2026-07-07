@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { TouchableOpacity, Alert, DeviceEventEmitter, Linking } from 'react-native';
-import RNFS from 'react-native-fs';
+import { TemporaryDirectoryPath, copyFile, readFile } from '@dr.pogodin/react-native-fs';
 import { Svg, Path } from 'react-native-svg';
 
 import HomeScreen from './HomeScreen';
@@ -120,9 +120,9 @@ const App: React.FC = () => {
 
         if (url.startsWith('content://')) {
           try {
-            const dest = `${RNFS.TemporaryDirectoryPath}/imported.sbpreset`;
-            await RNFS.copyFile(url, dest);
-            const content = await RNFS.readFile(dest, 'utf8');
+            const dest = `${TemporaryDirectoryPath}/imported.sbpreset`;
+            await copyFile(url, dest);
+            const content = await readFile(dest, 'utf8');
             const obj = JSON.parse(content);
             const id = await importPresetFile(obj);
             DeviceEventEmitter.emit('presetsUpdated');
@@ -137,7 +137,7 @@ const App: React.FC = () => {
           const decoded = decodeURIComponent(url);
           const path = decoded.replace('file://', '');
           console.log('reading file path:', path);
-          const content = await RNFS.readFile(path, 'utf8');
+          const content = await readFile(path, 'utf8');
           const obj = JSON.parse(content);
           const id = await importPresetFile(obj);
           DeviceEventEmitter.emit('presetsUpdated');
