@@ -38,7 +38,7 @@ target 'SongbookApp' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :ccache_enabled => true
     )
 
     # Xcode 26.4+ (Apple Clang 21) enforces stricter consteval rules that the
