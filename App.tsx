@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { TouchableOpacity, Alert, DeviceEventEmitter, Linking } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { TemporaryDirectoryPath, copyFile, readFile } from '@dr.pogodin/react-native-fs';
 import { Svg, Path } from 'react-native-svg';
 
@@ -164,12 +165,14 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <ThemeProvider>
-      <SongListChecker />
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <SongListChecker />
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 };
 
