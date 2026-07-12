@@ -65,6 +65,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Aplikacja potrzebuje dostępu do zdjęć, aby zapisywać i udostępniać eksportowane pieśni jako obrazy.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Aplikacja potrzebuje dostępu do zdjęć, aby zapisywać eksportowane pieśni w Twojej galerii.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Ta aplikacja wykorzystuje dane do personalizacji reklam.</string>
 	<key>RCTNewArchEnabled</key>
@@ -81,7 +85,10 @@
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
