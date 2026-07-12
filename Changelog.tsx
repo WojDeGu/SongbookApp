@@ -13,9 +13,9 @@ const ChangelogModal = ({ isVisible, onClose }: { isVisible: boolean, onClose: (
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Najnowsze zmiany</Text>
           <Text style={styles.changelogText}>
-            - Dodano możliwość udostępniania presetów{'\n'}
-            - Poprawki błędów{'\n'}
-            - Dodano nowe piosenki - Zaktualizuj listę w ustawieniach
+            - Uaktualniono wewnętrzne komponenty aplikacji, poprawiając zgodność i stabilność{'\n'}
+            - Zaktualizowano komponent odpowiedzialny za import bazy piosenek{'\n'}
+            - Przeniesiono stronę polityki prywatności
           </Text>
           <TouchableOpacity style={styles.button} onPress={onClose}>
             <Text style={styles.buttonText}>Zamknij</Text>
