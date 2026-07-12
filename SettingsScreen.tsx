@@ -119,12 +119,12 @@ const SettingsScreen: React.FC = () => {
   
   // Komponent przenoszący na stronę z polityką prywatności
   const openPrivacyPolicy = () => {
-    Linking.openURL('http://politykaprywatnosci.slowkodaje.pl').catch(err => 
+    Linking.openURL('https://sunos.pl/polityka-prywatnosci').catch(err => 
       console.error("Nie można otworzyć linku:", err)
     );
   };
   const openBuyCoffee = () => {
-    Linking.openURL('https://buycoffee.to/slowkodaje').catch(err => 
+    Linking.openURL('https://buycoffee.to/sunospl').catch(err => 
       console.error("Nie można otworzyć linku:", err)
     );
   };
