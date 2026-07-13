@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { TouchableOpacity, Alert, DeviceEventEmitter, Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { TemporaryDirectoryPath, copyFile, readFile } from '@dr.pogodin/react-native-fs';
+import { TemporaryDirectoryPath, copyFile, readFile, exists, unlink } from '@dr.pogodin/react-native-fs';
 import { Svg, Path } from 'react-native-svg';
 
 import HomeScreen from './HomeScreen';
@@ -150,17 +150,34 @@ const App: React.FC = () => {
       }
     };
 
-    Linking.getInitialURL().then(handleUrl).catch(console.error);
-    const sub = Linking.addEventListener('url', e => handleUrl(e.url));
-    const nativeSub = DeviceEventEmitter.addListener('RNFileOpener_fileOpened', (ev: any) => {
-      if (ev && ev.path) {
-        handleUrl(`file://${ev.path}`);
+    // iOS-only fallback: on cold launch via a tapped .sbpreset file, the
+    // native side copies it to this fixed tmp path (see AppDelegate.swift)
+    // instead of relying on Linking.getInitialURL(), whose launchOptions
+    // plumbing is unreliable on cold start under the New Architecture. On
+    // Android this file never exists, so this is a no-op.
+    const checkPendingImport = async () => {
+      const pendingPath = `${TemporaryDirectoryPath}/pending_sbpreset_import.sbpreset`;
+      try {
+        if (!(await exists(pendingPath))) return;
+        const content = await readFile(pendingPath, 'utf8');
+        const obj = JSON.parse(content);
+        await importPresetFile(obj);
+        DeviceEventEmitter.emit('presetsUpdated');
+        Alert.alert('Importowano preset', 'Preset został zaimportowany.');
+      } catch (e) {
+        console.error('Pending import failed', e);
+        Alert.alert('Błąd importu', String(e));
+      } finally {
+        unlink(pendingPath).catch(() => {});
       }
-    });
+    };
+
+    Linking.getInitialURL().then(handleUrl).catch(console.error);
+    checkPendingImport();
+    const sub = Linking.addEventListener('url', e => handleUrl(e.url));
 
     return () => {
       sub.remove();
-      nativeSub.remove();
     };
   }, []);
 
