@@ -29,8 +29,8 @@ const SongSearch = <T,>({ searchQuery, onSearchChange, items, getText, category,
     const tokens = q.split(/\s+/).filter(Boolean);
 
     const matches = (text: string) => {
-      const n = normalize(text);
-      return tokens.every(t => n.includes(t));
+      const words = normalize(text).split(/\s+/).filter(Boolean);
+      return tokens.every(t => words.some(w => w.startsWith(t)));
     };
 
     const filtered = items.filter((it: T) => {

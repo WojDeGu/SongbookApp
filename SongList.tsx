@@ -99,8 +99,8 @@ const SongList: React.FC<SongListProps> = ({ selectedCategory, favoritesOnly, fa
       const tokens = q.split(/\s+/).filter(Boolean);
 
       const matchesText = (text: string) => {
-        const n = normalize(text);
-        return tokens.every(t => n.includes(t));
+        const words = normalize(text).split(/\s+/).filter(Boolean);
+        return tokens.every(t => words.some(w => w.startsWith(t)));
       };
 
       const nameMatch = matchesText(song.name);
